@@ -3,24 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mind-Breaker: The Ultimate 120-Question Challenge</title>
+<title>Mind-Breaker</title>
 <link rel="stylesheet" href="css/style-main.css">
 <link rel="stylesheet" href="css/style-buttons.css">
 <link rel="stylesheet" href="css/style-mini.css">
 </head>
 <body>
+
 <div class="game-container">
   <h1>Mind-Breaker</h1>
-  <div class="subtitle">The Ultimate 120-Question Challenge</div>
-  <div class="lives" id="lives">❤️❤️❤️</div>
-  <div class="score-board" id="score">Question 1 / 120</div>
-  <div class="question-box" id="question">Loading...</div>
-  <div class="options" id="options"></div>
-  <div id="mini-game"><div id="mini-button"></div></div>
+  <div id="score"></div>
+  <div id="lives"></div>
+  <div id="question"></div>
+  <div id="options"></div>
+
+  <!-- Mini-game area -->
+  <div id="mini-game" style="display:none;">
+    <button id="mini-button">Hold Me!</button>
+  </div>
+
+  <!-- Winner submission -->
+  <div class="leaderboard-container">
+    <h2>🏆 Leaderboard</h2>
+    <ul id="winner-list"></ul>
+    <div id="winner-form">
+      <input type="text" id="player-name" placeholder="Choose your username">
+      <button id="submit-winner">Submit Time</button>
+    </div>
+  </div>
 </div>
 
 <script src="js/script-utils.js"></script>
 <script src="js/script-mini.js"></script>
 <script src="js/script-main.js"></script>
+<script src="js/script-winners.js"></script>
+
 </body>
 </html>

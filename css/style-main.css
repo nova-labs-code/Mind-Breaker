@@ -1,0 +1,29 @@
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #111;
+  color: #eee;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.game-container {
+  max-width: 600px;
+  padding: 20px;
+  text-align: center;
+}
+
+#question {
+  font-size: 1.2em;
+  margin: 20px 0;
+}
+
+#options button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}

@@ -1,0 +1,12 @@
+#mini-game {
+  margin: 20px 0;
+}
+
+#mini-button {
+  padding: 20px 40px;
+  font-size: 1.2em;
+  background: #227;
+  color: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+}

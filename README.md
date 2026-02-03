@@ -39,6 +39,3 @@ This project is **open-source**, meaning anyone can freely use, modify, and shar
   - Wrong answers trigger visual feedback  
   - Keeps gameplay engaging and fun
 
----
-
-## File Structure

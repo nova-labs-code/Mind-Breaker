@@ -1,0 +1,12 @@
+[
+  {"num":11,"q":"Hold the button for 2.5 seconds","type":"mini","duration":2500},
+  {"num":15,"q":"Hold the button for 3.5 seconds","type":"mini","duration":3500},
+  {"num":20,"q":"Hold the button for 2 seconds","type":"mini","duration":2000},
+  {"num":23,"q":"Hold the button for 4 seconds","type":"mini","duration":4000},
+  {"num":26,"q":"Hold the button for 1 second","type":"mini","duration":1000},
+  {"num":29,"q":"Hold the button for 5 seconds","type":"mini","duration":5000},
+  {"num":32,"q":"Hold the button for 3 seconds","type":"mini","duration":3000},
+  {"num":35,"q":"Hold the button for 2.5 seconds","type":"mini","duration":2500},
+  {"num":38,"q":"Hold the button for 4.5 seconds","type":"mini","duration":4500},
+  {"num":41,"q":"Hold the button for 1.5 seconds","type":"mini","duration":1500}
+]

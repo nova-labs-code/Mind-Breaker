@@ -1,0 +1,12 @@
+[
+  {"num":111,"q":"What is the 7th digit of Pi after the decimal?","options":["9","4","2","7"],"answer":0,"type":"normal"},
+  {"num":112,"q":"If x+y=10 and x-y=4, find x.","options":["7","6","8","5"],"answer":0,"type":"normal"},
+  {"num":113,"q":"Unscramble 'LOHSE'","options":["HOLES","SHEOL","HELLO","LOSEH"],"answer":0,"type":"normal"},
+  {"num":114,"q":"Which country has the longest coastline?","options":["Canada","Australia","Russia","USA"],"answer":0,"type":"normal"},
+  {"num":115,"q":"Solve: 2^5 * 2^3","options":["64","32","128","256"],"answer":2,"type":"normal"},
+  {"num":116,"q":"Which element has atomic number 79?","options":["Gold","Silver","Platinum","Iron"],"answer":0,"type":"normal"},
+  {"num":117,"q":"Riddle: What has keys but can't open locks?","options":["Keyboard","Map","Piano","Door"],"answer":0,"type":"normal"},
+  {"num":118,"q":"What is the smallest prime number?","options":["1","2","3","0"],"answer":1,"type":"normal"},
+  {"num":119,"q":"Which is not a mammal?","options":["Bat","Dolphin","Shark","Cat"],"answer":2,"type":"normal"},
+  {"num":120,"q":"Complete the sequence: 2,3,5,7,11,___","options":["12","13","14","15"],"answer":1,"type":"normal"}
+]

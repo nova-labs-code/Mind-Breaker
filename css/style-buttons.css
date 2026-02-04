@@ -8,13 +8,8 @@ button {
   transition: transform 0.1s, background 0.2s;
 }
 
-button:hover {
-  transform: scale(1.05);
-}
-
-button:active {
-  transform: scale(0.95);
-}
+button:hover { transform: scale(1.05); }
+button:active { transform: scale(0.95); }
 
 #answers button {
   display: block;
@@ -25,6 +20,8 @@ button:active {
   color: white;
 }
 
-#answers button:hover {
-  background-color: #1565c0;
+#answers button:hover { background-color: #1565c0; }
+
+#start-btn, input#username {
+  margin-top: 0.5em;
 }

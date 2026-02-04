@@ -54,10 +54,12 @@ async function loadQuestions(){
     }
 }
 
-// ==================== PRE-FILL USERNAME ====================
+// ==================== PRE-FILL / HIDE USERNAME ====================
 const savedName = localStorage.getItem('username');
 if(savedName){
-    usernameInput.value = savedName;
+    usernameInput.style.display = 'none';
+} else {
+    usernameInput.style.display = 'inline-block';
 }
 
 // ==================== START QUIZ ====================
@@ -65,7 +67,6 @@ playBtn.onclick = async () => {
     username = usernameInput.value.trim() || localStorage.getItem('username');
     if(!username) return alert("Enter username!");
 
-    // Save permanently
     localStorage.setItem('username', username);
 
     startScreen.style.transition = 'opacity 0.5s';
@@ -81,15 +82,15 @@ playBtn.onclick = async () => {
     updateLives();
     showQuestion();
 
-    // Always add Change Username button
+    // Always show Change Username button in bottom-left
     if(!document.getElementById('change-username-btn')){
         addChangeUsernameButton();
     }
 
+    // Music
     musicIndex = 0;
     bgMusic.src = musicFiles[musicIndex];
     bgMusic.play().catch(e => console.warn("Music failed to play:", e));
-
     bgMusic.onended = () => {
         musicIndex = (musicIndex + 1) % musicFiles.length;
         bgMusic.src = musicFiles[musicIndex];
@@ -197,14 +198,27 @@ function addChangeUsernameButton(){
     const btn = document.createElement('button');
     btn.id = 'change-username-btn';
     btn.textContent = 'Change Username';
-    btn.style.marginLeft = '1rem';
+
+    // Bottom-left corner, smaller width, slightly taller
+    Object.assign(btn.style, {
+        position: 'fixed',
+        bottom: '20px',
+        left: '20px',
+        width: '120px',
+        height: '40px',
+        fontSize: '0.9rem',
+        zIndex: 9999
+    });
+
     btn.onclick = () => {
         const newName = prompt("Enter new username:", username || '');
         if(newName && newName.trim()){
             username = newName.trim();
             localStorage.setItem('username', username);
             alert("Username updated to: " + username);
+            usernameInput.value = username;
         }
     };
-    questionNumberCorner.appendChild(btn);
+
+    document.body.appendChild(btn);
 }

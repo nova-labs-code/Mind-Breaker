@@ -117,7 +117,7 @@ function showQuestion(){
     questionText.style.animation='none'; void questionText.offsetWidth;
     questionText.style.animation='pound 0.4s';
 
-    // Shuffle options but track correct answer
+    // Shuffle options and track correct answer
     const shuffledOptions = shuffle([...q.options]);
     const correctIndex = shuffledOptions.indexOf(q.options[q.answer]);
 

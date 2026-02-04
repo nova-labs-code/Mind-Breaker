@@ -1,44 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mind Breaker</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mind Breaker</title>
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 
-<div id="game-container">
+<!-- START -->
+<div id="start-screen">
   <h1>Mind Breaker</h1>
-  
-  <!-- Question area -->
-  <div id="question-box">
-    <p id="question-text"></p>
-    <div id="options"></div>
-  </div>
-
-  <!-- Mini-game button (hidden unless question.type==="mini") -->
-  <button id="mini-button" style="display:none;">Hold Me</button>
-
-  <!-- Username submission (hidden until finished) -->
-  <div id="finish-box" style="display:none;">
-    <h2>All Done!</h2>
-    <label>Enter your username: <input type="text" id="username"></label>
-    <button id="submit-score">Submit</button>
-    <p>Your time: <span id="final-time"></span> seconds</p>
-  </div>
-
-  <!-- Leaderboard (hidden until submission) -->
-  <div id="leaderboard" style="display:none;">
-    <h2>Leaderboard</h2>
-    <ol id="scores-list"></ol>
-  </div>
-
-  <!-- Lives display -->
-  <p>Lives: <span id="lives">3</span></p>
+  <input id="username" placeholder="Username" maxlength="16">
+  <button id="start-btn">Start</button>
+  <button id="credits-btn">Credits</button>
+  <p id="credits" hidden>ews – founder</p>
 </div>
 
-<script src="main.js"></script>
-<script src="winners.js"></script>
+<!-- GAME -->
+<div id="game-screen" hidden>
+  <div id="top-bar">
+    <span id="lives">❤️❤️❤️</span>
+    <span id="timer">00:00</span>
+  </div>
+
+  <div id="question-box">
+    <button id="play-btn">▶ Play</button>
+    <p id="question-text" hidden></p>
+    <div id="answers"></div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="leaderboard" hidden>
+  <h2>Leaderboard</h2>
+  <ul id="leaderboard-list"></ul>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- JS (ORDER MATTERS) -->
+<script src="js/winners.js"></script>
+<script src="js/script-main.js"></script>
+
+<script>
+  document.getElementById("credits-btn").onclick = () => {
+    const c = document.getElementById("credits");
+    c.hidden = !c.hidden;
+  };
+</script>
+
 </body>
 </html>

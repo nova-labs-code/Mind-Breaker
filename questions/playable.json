@@ -1,12 +1,81 @@
 [
-  {"num":11,"q":"Hold the button for 2.5 seconds","type":"mini","duration":2500},
-  {"num":15,"q":"Hold the button for 3.5 seconds","type":"mini","duration":3500},
-  {"num":20,"q":"Hold the button for 2 seconds","type":"mini","duration":2000},
-  {"num":23,"q":"Hold the button for 4 seconds","type":"mini","duration":4000},
-  {"num":26,"q":"Hold the button for 1 second","type":"mini","duration":1000},
-  {"num":29,"q":"Hold the button for 5 seconds","type":"mini","duration":5000},
-  {"num":32,"q":"Hold the button for 3 seconds","type":"mini","duration":3000},
-  {"num":35,"q":"Hold the button for 2.5 seconds","type":"mini","duration":2500},
-  {"num":38,"q":"Hold the button for 4.5 seconds","type":"mini","duration":4500},
-  {"num":41,"q":"Hold the button for 1.5 seconds","type":"mini","duration":1500}
+  {
+    "num": 11,
+    "q": "Hold the button continuously for 2.5 seconds to pass",
+    "type": "mini",
+    "mini": "hold",
+    "duration": 2500
+  },
+  {
+    "num": 15,
+    "q": "Wait exactly 3 seconds after the button appears, then click it",
+    "type": "mini",
+    "mini": "wait",
+    "duration": 3000
+  },
+  {
+    "num": 20,
+    "q": "Click the safe button among 5 buttons",
+    "type": "mini",
+    "mini": "avoid",
+    "buttons": 5,
+    "safe": 2
+  },
+  {
+    "num": 23,
+    "q": "Hold the button continuously for 4 seconds to pass",
+    "type": "mini",
+    "mini": "hold",
+    "duration": 4000
+  },
+  {
+    "num": 26,
+    "q": "Click the button labeled 'Wrong' instead of 'Correct' to pass",
+    "type": "mini",
+    "mini": "reverse"
+  },
+  {
+    "num": 29,
+    "q": "Hold the button continuously for 5 seconds to pass",
+    "type": "mini",
+    "mini": "hold",
+    "duration": 5000
+  },
+  {
+    "num": 32,
+    "q": "Wait exactly 2.5 seconds after the button appears, then click it",
+    "type": "mini",
+    "mini": "wait",
+    "duration": 2500
+  },
+  {
+    "num": 35,
+    "q": "Click the safe button among 6 buttons before time runs out",
+    "type": "mini",
+    "mini": "avoid",
+    "buttons": 6,
+    "safe": 3
+  },
+  {
+    "num": 38,
+    "q": "Hold the button for 1 second while it randomly moves around the screen",
+    "type": "mini",
+    "mini": "hold-move",
+    "duration": 1000
+  },
+  {
+    "num": 41,
+    "q": "Click the correct button among 8 buttons while they randomly change positions and labels",
+    "type": "mini",
+    "mini": "avoid-move",
+    "buttons": 8,
+    "safe": 5
+  },
+  {
+    "num": 44,
+    "q": "Click the button labeled 'Wrong' exactly 1.5 seconds after it appears",
+    "type": "mini",
+    "mini": "reverse-wait",
+    "duration": 1500
+  }
 ]

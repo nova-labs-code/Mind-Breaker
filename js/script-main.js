@@ -6,7 +6,10 @@ let username;
 let leaderboard = [];
 let timerInterval;
 let bgAudio;
+let audioIndex = 1;
+const totalTracks = 8; // music1 through music8
 
+// Load all JSON question files
 async function loadQuestions() {
   const medium = await fetch('questions/medium.json').then(r => r.json());
   const hard = await fetch('questions/hard.json').then(r => r.json());
@@ -14,9 +17,10 @@ async function loadQuestions() {
   const playable = await fetch('questions/playable.json').then(r => r.json());
 
   questions = [...medium, ...trick, ...playable, ...hard];
-  questions.sort((a, b) => a.num - b.num);
+  questions.sort((a,b) => a.num - b.num); // keep fixed order
 }
 
+// Start the quiz
 function startQuiz() {
   username = document.getElementById('username').value.trim();
   if (!username) { alert('Enter a username'); return; }
@@ -35,10 +39,12 @@ function startQuiz() {
   playBackgroundAudio();
 }
 
+// Lives display
 function updateLives() {
   document.getElementById('lives').textContent = '❤️'.repeat(lives);
 }
 
+// Timer display
 function startTimer() {
   const timerElem = document.getElementById('timer');
   timerInterval = setInterval(() => {
@@ -51,12 +57,14 @@ function stopTimer() {
   clearInterval(timerInterval);
 }
 
+// Show current question
 function showQuestion() {
   if (current >= questions.length) return endQuiz();
 
   const q = questions[current];
   const questionText = document.getElementById('question-text');
   const answersDiv = document.getElementById('answers');
+
   questionText.hidden = false;
   answersDiv.innerHTML = '';
 
@@ -65,6 +73,7 @@ function showQuestion() {
     return;
   }
 
+  // Normal, trick, hard questions
   q.options.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.textContent = opt;
@@ -73,6 +82,7 @@ function showQuestion() {
   });
 }
 
+// Check answer for normal questions
 function checkAnswer(selected) {
   const q = questions[current];
   if (selected === q.answer) {
@@ -88,6 +98,7 @@ function checkAnswer(selected) {
   }
 }
 
+// End quiz and show leaderboard
 function endQuiz() {
   stopTimer();
   const totalTime = ((Date.now() - startTime)/1000).toFixed(2);
@@ -106,12 +117,20 @@ function endQuiz() {
   lb.hidden = false;
 }
 
+// Background audio looping through music1 → music8
 function playBackgroundAudio() {
   if (bgAudio) return; // already playing
-  bgAudio = new Audio('music/music1.mp3'); // replace with your first track
-  bgAudio.loop = true;
+
+  bgAudio = new Audio(`music/music${audioIndex}.mp3`);
   bgAudio.volume = 0.5;
   bgAudio.play();
+
+  bgAudio.onended = () => {
+    audioIndex++;
+    if (audioIndex > totalTracks) audioIndex = 1;
+    bgAudio.src = `music/music${audioIndex}.mp3`;
+    bgAudio.play();
+  };
 }
 
 // Start button
@@ -125,3 +144,4 @@ document.getElementById('credits-btn').onclick = () => alert('EWS - Founder');
 
 // Initialize
 loadQuestions();
+updateLives();

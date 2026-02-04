@@ -21,13 +21,11 @@ let username;
 async function loadQuestions() {
     const files = ['medium','hard','trick','mind-tricks'];
     let all = [];
-    for (const f of files) {
-        try {
+    for(const f of files){
+        try{
             const data = await fetch(`questions/${f}.json`).then(r=>r.json());
-            if (Array.isArray(data)) all.push(...data);
-        } catch(e) {
-            console.warn(`Failed to load ${f}.json`, e);
-        }
+            if(Array.isArray(data)) all.push(...data);
+        } catch(e){ console.warn(`Failed to load ${f}.json`, e); }
     }
     all.sort((a,b)=>a.num - b.num);
     return all;
@@ -36,11 +34,10 @@ async function loadQuestions() {
 // ==================== START QUIZ ====================
 playBtn.onclick = async () => {
     username = usernameInput.value.trim();
-    if (!username) return alert("Enter username!");
+    if(!username) return alert("Enter username!");
 
-    // Play background music
-    try { await bgMusic.play(); } 
-    catch(e){ console.warn("Music failed to play", e); }
+    // Play music on user click
+    try { await bgMusic.play(); } catch(e){ console.warn("Music failed to play:",e); }
 
     startScreen.style.transition='opacity 0.5s';
     startScreen.style.opacity=0;
@@ -51,40 +48,25 @@ playBtn.onclick = async () => {
     questions = await loadQuestions();
     if(!questions.length) return alert("No questions loaded!");
 
-    startTime = Date.now();
+    startTime=Date.now();
     startTimer();
     updateLives();
     showQuestion();
 };
 
 // ==================== TIMER ====================
-function startTimer() {
-    timerInterval = setInterval(()=>{
-        timerEl.textContent = ((Date.now()-startTime)/1000).toFixed(1)+'s';
-    },100);
+function startTimer(){
+    timerInterval = setInterval(()=>{ timerEl.textContent=((Date.now()-startTime)/1000).toFixed(1)+'s'; },100);
 }
 
 // ==================== LIVES ====================
-function updateLives() {
-    livesEl.textContent = '❤ '.repeat(lives);
-}
+function updateLives(){ livesEl.textContent='❤ '.repeat(lives); }
 
-function loseLife(){
-    flash('wrong'); shake(); lives--; updateLives();
-    if(lives<=0) location.reload();
-}
+function loseLife(){ flash('wrong'); shake(); lives--; updateLives(); if(lives<=0) location.reload(); }
 
 // ==================== FEEDBACK ====================
-function flash(type){
-    document.body.classList.add(type);
-    setTimeout(()=>document.body.classList.remove(type),150);
-}
-
-function shake(){
-    questionContainer.classList.remove('shake');
-    void questionContainer.offsetWidth;
-    questionContainer.classList.add('shake');
-}
+function flash(type){ document.body.classList.add(type); setTimeout(()=>document.body.classList.remove(type),150); }
+function shake(){ questionContainer.classList.remove('shake'); void questionContainer.offsetWidth; questionContainer.classList.add('shake'); }
 
 // ==================== QUESTIONS ====================
 function showQuestion(){
@@ -93,8 +75,8 @@ function showQuestion(){
     answersDiv.innerHTML='';
     const q = questions[currentIndex];
 
-    questionNumberEl.textContent = `Question ${currentIndex+1} / ${questions.length}`;
-    questionText.textContent = q.q;
+    questionNumberEl.textContent=`Question ${currentIndex+1} / ${questions.length}`;
+    questionText.textContent=q.q;
     questionText.style.animation='none'; void questionText.offsetWidth;
     questionText.style.animation='pound 0.4s';
 

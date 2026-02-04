@@ -1,9 +1,10 @@
+/* Main style */
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  font-family: 'Press Start 2P', monospace;
   background-color: #121212;
   color: #f0f0f0;
+  margin: 0;
+  padding: 0;
 }
 
 .center-screen {
@@ -13,27 +14,68 @@ body {
   justify-content: center;
   min-height: 100vh;
   text-align: center;
-  padding: 1em;
 }
 
+#start-screen h1 {
+  font-size: 2em;
+  margin-bottom: 1em;
+  color: #ffeb3b;
+}
+
+#username {
+  padding: 0.5em 1em;
+  font-size: 1em;
+  margin-bottom: 1em;
+  border-radius: 5px;
+  border: 1px solid #888;
+  background-color: #222;
+  color: #fff;
+  text-align: center;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  padding: 0.7em 1.5em;
+  margin: 0.3em;
+  font-size: 1.1em;
+  transition: all 0.1s ease;
+  background-color: #1e88e5;
+  color: #fff;
+}
+
+button:hover { background-color: #1565c0; transform: scale(1.05); }
+button:active { transform: scale(0.95); }
+
+/* Question container */
 #question-container {
-  max-width: 500px;
+  max-width: 600px;
   width: 90%;
+  margin: auto;
   text-align: center;
 }
 
 #question-text {
-  font-size: 1.6em;
+  font-size: 1.4em;
   font-weight: bold;
   margin-bottom: 1em;
   min-height: 3em;
   transition: opacity 0.3s ease;
 }
 
+/* Info bar (lives + timer) */
 #info-bar {
-  width: 90%;
   display: flex;
   justify-content: space-between;
+  width: 90%;
+  max-width: 600px;
   margin-bottom: 1em;
-  font-size: 1.1em;
+  font-size: 1em;
 }
+
+/* Leaderboard */
+#leaderboard { padding-top: 2em; text-align: center; }
+#leaderboard h2 { font-size: 2em; margin-bottom: 1em; }
+#leaderboard-list { list-style: none; padding: 0; max-width: 400px; margin: auto; }
+#leaderboard-list li { background: #333; margin: 0.3em 0; padding: 0.5em 1em; border-radius: 5px; }

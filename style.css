@@ -1,160 +1,97 @@
-/* Global */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Press Start 2P', cursive;
-  background: #111;
-  color: yellow;
-  overflow: hidden;
-  text-align: center;
+* {
+  box-sizing: border-box;
 }
 
-/* Start Screen */
+body {
+  margin: 0;
+  background: #111;
+  font-family: 'Press Start 2P', cursive;
+  color: yellow;
+  overflow: hidden;
+}
+
+/* START SCREEN */
 #start-screen {
-  width: 100vw;
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 24px;
 }
 
-#title-text {
-  font-size: clamp(32px, 8vw, 80px);
-  margin-bottom: 3vh;
-  text-shadow: 2px 2px 4px #000;
-  color: yellow;
+#title {
+  font-size: clamp(32px, 6vw, 64px);
 }
 
-#username {
-  font-size: clamp(16px, 2vw, 24px);
-  padding: 1vh 2vw;
-  border: 2px solid yellow;
-  border-radius: 8px;
-  margin-bottom: 2vh;
-  background: transparent;
-  color: white;
+input {
+  font-family: inherit;
+  padding: 12px;
+  font-size: 14px;
   text-align: center;
 }
 
-#play-btn {
-  font-size: clamp(16px, 2.5vw, 28px);
-  padding: 1.5vh 3vw;
-  border: 2px solid yellow;
-  border-radius: 12px;
+button {
+  font-family: inherit;
+  padding: 14px 26px;
   background: transparent;
+  border: 3px solid yellow;
   color: white;
   cursor: pointer;
-  text-shadow: 1px 1px 2px #000;
-  transition: transform 0.2s;
+  font-size: 14px;
 }
 
-#play-btn:hover { transform: scale(1.1); }
+button:hover {
+  background: yellow;
+  color: black;
+}
 
-/* Loading */
-#loading { font-size: clamp(16px,2vw,32px); text-align:center; margin-top:20px; }
-
-/* Game Screen */
+/* GAME */
 #game-screen {
-  width: 100vw;
   height: 100vh;
   position: relative;
-  display: none;
 }
 
-/* Timer bottom-right */
+#lives {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 18px;
+}
+
 #timer {
   position: absolute;
-  bottom: 2rem;
-  right: 2rem;
-  font-size: clamp(16px, 2vw, 32px);
-  color: white;
-  text-shadow: 1px 1px 2px #000;
+  right: 30px;
+  bottom: 30px;
+  font-size: 14px;
 }
 
-/* Question Container */
+/* QUESTION */
 #question-container {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  max-width: 800px;
+  max-width: 900px;
   text-align: center;
 }
 
 #question-text {
-  font-size: clamp(24px, 5vw, 64px);
-  text-shadow: 2px 2px 4px #000;
-  color: yellow;
-  animation: pound 0.5s;
-  margin-bottom: 3vh;
+  font-size: clamp(20px, 4vw, 48px);
+  margin-bottom: 30px;
+  animation: pound 0.4s ease;
 }
 
-/* Pound Animations */
 @keyframes pound {
-  0% { transform: translateY(-50%) scale(0.5); opacity: 0; }
-  30% { transform: translateY(-50%) scale(1.2); opacity: 1; }
-  50% { transform: translateY(-50%) scale(0.9); }
-  70% { transform: translateY(-50%) scale(1.05); }
-  100% { transform: translateY(-50%) scale(1); }
-}
-
-@keyframes button-pound {
-  0% { transform: scale(0.5); opacity: 0; }
-  30% { transform: scale(1.2); opacity: 1; }
-  50% { transform: scale(0.9); }
-  70% { transform: scale(1.05); }
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
   100% { transform: scale(1); }
 }
 
-/* Answer Buttons */
 #answers {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5vh;
-}
-
-#answers button, .hold-btn {
-  font-size: clamp(14px, 2vw, 28px);
-  padding: 0.8rem 1.5rem;
-  background: transparent;
-  color: white;
-  border: 2px solid yellow;
-  border-radius: 12px;
-  cursor: pointer;
-  text-shadow: 1px 1px 2px #000;
-  transition: transform 0.2s;
-}
-
-#answers button:hover, .hold-btn:hover { transform: scale(1.1); }
-.pound-btn { animation: button-pound 0.5s; }
-
-/* Leaderboard */
-#leaderboard {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding-top: 5vh;
-  font-size: clamp(16px, 2vw, 28px);
-  display: none;
-  color: white;
-  overflow-y: auto;
-}
-
-#leaderboard-list { 
-  list-style: none; 
-  padding: 0; 
-  margin: 2vh 0; 
-  width: 50%; 
-  text-align: center; 
-}
-
-#leaderboard-list li { 
-  padding: 1vh 0; 
-  border-bottom: 1px solid yellow; 
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
 }

@@ -1,39 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mind Breaker Quiz</title>
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mind Breaker</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- Start Screen -->
 <div id="start-screen">
-  <div id="title-text">Mind Breaker</div>
-  <input type="text" id="username" placeholder="Enter username">
+  <h1 id="title">Mind Breaker</h1>
+  <input id="username" placeholder="Username">
   <button id="play-btn">Play</button>
 </div>
 
-<!-- Loading -->
-<div id="loading" style="display:none;">Loading...</div>
-
-<!-- Game Screen -->
-<div id="game-screen">
+<div id="game-screen" hidden>
+  <div id="lives">❤️❤️❤️</div>
   <div id="timer"></div>
+
   <div id="question-container">
     <div id="question-text"></div>
     <div id="answers"></div>
   </div>
 </div>
 
-<!-- Leaderboard -->
-<div id="leaderboard">
-  <h2>Leaderboard</h2>
-  <ul id="leaderboard-list"></ul>
-</div>
-
-<script src="script.js"></script>
+<script src="main.js"></script>
 </body>
 </html>

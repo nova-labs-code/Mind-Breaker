@@ -1,18 +1,11 @@
-/* Mini game buttons special effects */
+#answers button {
+  position: relative;
+}
+
 button.hold-btn, button.wait-btn, button.reverse-btn {
-  width: 120px;
-  height: 50px;
-  font-size: 1em;
-  margin: 0.5em;
   background-color: #ff9800;
   color: #fff;
-}
-
-button.hold-btn:hover, button.wait-btn:hover, button.reverse-btn:hover {
-  background-color: #f57c00;
-}
-
-/* Moving buttons */
-#answers button {
-  position: relative; /* moving buttons will have absolute set by JS */
+  width: 120px;
+  height: 50px;
+  margin: 0.5em;
 }

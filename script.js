@@ -1,11 +1,13 @@
+/* ==================== ELEMENTS ==================== */
 const playBtn = document.getElementById('play-btn');
+const usernameInput = document.getElementById('username');
 const startScreen = document.getElementById('start-screen');
 const gameScreen = document.getElementById('game-screen');
+const questionContainer = document.getElementById('question-container');
 const questionText = document.getElementById('question-text');
 const answersDiv = document.getElementById('answers');
 const timerEl = document.getElementById('timer');
 const livesEl = document.getElementById('lives');
-const container = document.getElementById('question-container');
 
 let questions = [];
 let index = 0;
@@ -14,17 +16,17 @@ let startTime;
 let timerInterval;
 let username;
 
-/* ================= AUDIO ================= */
+/* ==================== AUDIO ==================== */
 const tracks = [];
 let currentTrack = 0;
 for (let i = 1; i <= 8; i++) {
-  const a = new Audio(`music/music${i}.mp3`);
-  a.volume = 0.5;
-  a.addEventListener('ended', () => {
+  const audio = new Audio(`music/music${i}.mp3`);
+  audio.volume = 0.5;
+  audio.addEventListener('ended', () => {
     currentTrack = (currentTrack + 1) % tracks.length;
     playMusic();
   });
-  tracks.push(a);
+  tracks.push(audio);
 }
 
 function playMusic() {
@@ -32,7 +34,7 @@ function playMusic() {
   tracks[currentTrack].play().catch(()=>{});
 }
 
-/* ================= LOAD QUESTIONS ================= */
+/* ==================== LOAD QUESTIONS ==================== */
 async function loadQuestions() {
   const files = ['medium','hard','trick','playable'];
   let all = [];
@@ -43,18 +45,18 @@ async function loadQuestions() {
   return all.sort((a,b)=>a.num-b.num);
 }
 
-/* ================= GAME START ================= */
+/* ==================== START QUIZ ==================== */
 playBtn.onclick = async () => {
-  username = document.getElementById('username').value.trim();
+  username = usernameInput.value.trim();
   if (!username) return alert("Please enter a username!");
-
+  
   playMusic();
   startScreen.remove();
   gameScreen.style.display = 'flex';
   gameScreen.style.flexDirection = 'column';
   gameScreen.style.alignItems = 'center';
   gameScreen.style.justifyContent = 'center';
-
+  
   questions = await loadQuestions();
   startTime = Date.now();
   startTimer();
@@ -62,14 +64,14 @@ playBtn.onclick = async () => {
   showQuestion();
 };
 
-/* ================= TIMER ================= */
+/* ==================== TIMER ==================== */
 function startTimer() {
   timerInterval = setInterval(() => {
     timerEl.textContent = ((Date.now() - startTime)/1000).toFixed(1)+'s';
   }, 100);
 }
 
-/* ================= LIVES ================= */
+/* ==================== LIVES ==================== */
 function updateLives() {
   livesEl.textContent = '❤ '.repeat(lives);
 }
@@ -82,33 +84,33 @@ function loseLife() {
   if (lives <= 0) location.reload();
 }
 
-/* ================= VISUAL FEEDBACK ================= */
+/* ==================== VISUAL FEEDBACK ==================== */
 function flash(type) {
   document.body.classList.add(type);
   setTimeout(()=>document.body.classList.remove(type),150);
 }
 
 function shake() {
-  container.classList.remove('shake');
-  void container.offsetWidth;
-  container.classList.add('shake');
+  questionContainer.classList.remove('shake');
+  void questionContainer.offsetWidth;
+  questionContainer.classList.add('shake');
 }
 
-/* ================= QUESTIONS ================= */
+/* ==================== QUESTIONS ==================== */
 function showQuestion() {
   answersDiv.innerHTML = '';
   const q = questions[index];
-
+  
   questionText.textContent = q.q;
   questionText.style.animation = 'none';
   void questionText.offsetWidth;
   questionText.style.animation = 'pound 0.4s';
-
+  
   if (q.type === 'normal') renderNormal(q);
   if (q.type === 'mini') renderMini(q);
 }
 
-/* ================= NORMAL ================= */
+/* ==================== NORMAL ==================== */
 function renderNormal(q) {
   answersDiv.style.position='relative';
   answersDiv.style.display='flex';
@@ -117,15 +119,16 @@ function renderNormal(q) {
   answersDiv.style.alignItems='center';
   answersDiv.style.gap='10px';
   answersDiv.style.minHeight='150px';
-
+  
   q.options.forEach((opt,i)=>{
     const btn = document.createElement('button');
     btn.textContent = opt;
     btn.style.padding='1rem 2rem';
-    btn.style.fontFamily='custom-font, sans-serif';
+    btn.style.fontFamily='Press Start 2P, monospace';
     btn.style.fontSize='1.2rem';
     btn.style.background='yellow';
     btn.style.color='black';
+    btn.style.border='2px solid white';
     btn.onclick = ()=>{
       if (i === q.answer) flash('correct'), next();
       else loseLife();
@@ -134,7 +137,7 @@ function renderNormal(q) {
   });
 }
 
-/* ================= MINI GAMES ================= */
+/* ==================== MINI GAMES ==================== */
 function renderMini(q) {
   answersDiv.innerHTML = '';
   answersDiv.style.position='relative';
@@ -144,82 +147,86 @@ function renderMini(q) {
   answersDiv.style.justifyContent='center';
   answersDiv.style.alignItems='center';
   answersDiv.style.gap='10px';
-
+  
   const makeBtn = (text, clickHandler) => {
     const btn = document.createElement('button');
     btn.textContent = text;
-    btn.style.padding='1rem 2rem';
-    btn.style.fontFamily='custom-font, sans-serif';
-    btn.style.fontSize='1.2rem';
-    btn.style.background='yellow';
-    btn.style.color='black';
+    btn.style.padding = '1rem 2rem';
+    btn.style.fontFamily = 'Press Start 2P, monospace';
+    btn.style.fontSize = '1.2rem';
+    btn.style.background = 'yellow';
+    btn.style.color = 'black';
+    btn.style.border = '2px solid white';
+    btn.style.cursor = 'pointer';
     btn.onclick = clickHandler;
     answersDiv.appendChild(btn);
     return btn;
   }
-
-  if(q.mini==='hold'){
+  
+  if (q.mini==='hold'){
+    const btn = makeBtn('HOLD', ()=>{});
     let timer;
-    const btn = makeBtn('HOLD',()=>{});
-    btn.onmousedown=()=>timer=setTimeout(()=>{flash('correct');next();},q.duration);
-    btn.onmouseup=btn.onmouseleave=()=>clearTimeout(timer);
+    btn.onmousedown = () => timer = setTimeout(()=>{flash('correct'); next();}, q.duration);
+    btn.onmouseup = btn.onmouseleave = ()=>clearTimeout(timer);
   }
-
-  if(q.mini==='wait'){
-    const btn = makeBtn('CLICK',()=>{});
-    const start=Date.now();
-    btn.onclick=()=>Math.abs(Date.now()-start-q.duration)<200? (flash('correct'),next()) : loseLife();
+  
+  if (q.mini==='wait'){
+    const btn = makeBtn('CLICK', ()=>{});
+    const start = Date.now();
+    btn.onclick = ()=>Math.abs(Date.now()-start-q.duration)<200 ? (flash('correct'), next()) : loseLife();
   }
-
-  if(q.mini==='reverse'){
-    makeBtn('Correct',()=>loseLife());
-    makeBtn('Wrong',()=>{flash('correct');next();});
+  
+  if (q.mini==='reverse'){
+    makeBtn('Correct', ()=>loseLife());
+    makeBtn('Wrong', ()=>{flash('correct'); next();});
   }
-
-  if(q.mini==='reverse-wait'){
-    const btn = makeBtn('CLICK',()=>{});
-    const start=Date.now();
-    btn.onclick=()=>Math.abs(Date.now()-start-q.duration)<200? (flash('correct'),next()) : loseLife();
+  
+  if (q.mini==='reverse-wait'){
+    const btn = makeBtn('CLICK', ()=>{});
+    const start = Date.now();
+    btn.onclick = ()=>Math.abs(Date.now()-start-q.duration)<200 ? (flash('correct'), next()) : loseLife();
   }
-
-  if(q.mini==='avoid'){
+  
+  if (q.mini==='avoid'){
     for(let i=1;i<=q.buttons;i++){
-      makeBtn('Button '+i,()=> i===q.safe? (flash('correct'),next()) : loseLife());
+      makeBtn('Button '+i, ()=> i===q.safe ? (flash('correct'), next()) : loseLife());
     }
   }
-
-  if(q.mini==='hold-move'){
-    const btn = makeBtn('HOLD',()=>{});
+  
+  if (q.mini==='hold-move'){
+    const btn = makeBtn('HOLD', ()=>{});
     btn.style.position='absolute';
-    const move=()=>{btn.style.left=Math.random()*(answersDiv.clientWidth-100)+'px'; btn.style.top=Math.random()*(answersDiv.clientHeight-50)+'px';};
-    const interval=setInterval(move,100);
+    const move = ()=>{btn.style.left=Math.random()*(answersDiv.clientWidth-100)+'px'; btn.style.top=Math.random()*(answersDiv.clientHeight-50)+'px';};
+    const interval = setInterval(move,100);
     let timer;
-    btn.onmousedown=()=>timer=setTimeout(()=>{clearInterval(interval);flash('correct');next();},q.duration);
-    btn.onmouseup=btn.onmouseleave=()=>clearTimeout(timer);
+    btn.onmousedown = ()=>timer = setTimeout(()=>{clearInterval(interval); flash('correct'); next();}, q.duration);
+    btn.onmouseup = btn.onmouseleave = ()=>clearTimeout(timer);
+    move();
   }
-
-  if(q.mini==='avoid-move'){
+  
+  if (q.mini==='avoid-move'){
     for(let i=1;i<=q.buttons;i++){
-      const btn = makeBtn('Button '+i,()=> i===q.safe? (flash('correct'),next()) : loseLife());
+      const btn = makeBtn('Button '+i, ()=> i===q.safe ? (flash('correct'), next()) : loseLife());
       btn.style.position='absolute';
-      const move=()=>{btn.style.left=Math.random()*(answersDiv.clientWidth-100)+'px'; btn.style.top=Math.random()*(answersDiv.clientHeight-50)+'px';};
+      const move = ()=>{btn.style.left=Math.random()*(answersDiv.clientWidth-100)+'px'; btn.style.top=Math.random()*(answersDiv.clientHeight-50)+'px';};
       setInterval(move,150);
+      move();
     }
   }
 }
 
-/* ================= NEXT ================= */
+/* ==================== NEXT ==================== */
 function next() {
   index++;
   if(index>=questions.length) finishQuiz();
   else showQuestion();
 }
 
-/* ================= FINISH / LEADERBOARD ================= */
+/* ==================== FINISH / LEADERBOARD ==================== */
 function finishQuiz() {
   clearInterval(timerInterval);
   const timeTaken=((Date.now()-startTime)/1000).toFixed(2);
-  saveScore(username,timeTaken);
+  saveScore(username, timeTaken);
   showLeaderboard();
 }
 
@@ -228,10 +235,10 @@ function saveScore(user,time){
   let name=user;
   let dup=lb.filter(e=>e.username.startsWith(user)).length;
   if(dup>0) name=user+'#'+(dup+1);
-  lb.push({username:name,time:parseFloat(time)});
+  lb.push({username:name, time:parseFloat(time)});
   lb.sort((a,b)=>a.time-b.time);
   if(lb.length>1000) lb.length=1000;
-  localStorage.setItem('leaderboard',JSON.stringify(lb));
+  localStorage.setItem('leaderboard', JSON.stringify(lb));
 }
 
 function showLeaderboard(){

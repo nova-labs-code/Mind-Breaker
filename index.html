@@ -5,41 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mind Breaker</title>
 
-<!-- Custom font from Google Fonts -->
+<!-- Custom font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style-main.css">
+<!-- Single consolidated CSS -->
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- START SCREEN -->
 <div id="start-screen" class="center-screen">
   <h1>Mind Breaker</h1>
   <input id="username" type="text" placeholder="Enter your username">
-  <button id="play-btn">Play!</button>
+  <button id="play-btn" disabled>Loading...</button>
 </div>
 
+<!-- GAME SCREEN -->
 <div id="game-screen" hidden>
   <div id="info-bar">
     <span id="lives"></span>
     <span id="timer"></span>
   </div>
+
   <div id="question-container">
     <p id="question-text"></p>
     <div id="answers"></div>
   </div>
 </div>
 
+<!-- LEADERBOARD -->
 <div id="leaderboard" hidden>
   <h2>Leaderboard</h2>
   <ul id="leaderboard-list"></ul>
 </div>
 
-<script src="js/script-utils.js"></script>
-<script src="js/script-mini.js"></script>
-<script src="js/script-winners.js"></script>
-<script src="js/script-main.js"></script>
+<!-- SINGLE JS -->
+<script src="script.js"></script>
 
 </body>
 </html>

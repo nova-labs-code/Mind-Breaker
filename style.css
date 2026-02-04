@@ -20,14 +20,14 @@ body {
 }
 
 #title-text {
-  font-size: 8vw; /* Scales with screen width */
+  font-size: clamp(32px, 8vw, 80px);
   margin-bottom: 3vh;
   text-shadow: 2px 2px 4px #000;
   color: yellow;
 }
 
 #username {
-  font-size: 2vw;
+  font-size: clamp(16px, 2vw, 24px);
   padding: 1vh 2vw;
   border: 2px solid yellow;
   border-radius: 8px;
@@ -38,7 +38,7 @@ body {
 }
 
 #play-btn {
-  font-size: 2.5vw;
+  font-size: clamp(16px, 2.5vw, 28px);
   padding: 1.5vh 3vw;
   border: 2px solid yellow;
   border-radius: 12px;
@@ -59,13 +59,14 @@ body {
   display: none;
 }
 
-/* Timer in bottom-right but slightly above bottom */
+/* Timer in bottom-right, slightly above bottom */
 #timer {
   position: absolute;
-  bottom: 5vh; /* slightly above bottom */
-  right: 2vw;
-  font-size: 2vw;
+  bottom: 2rem;
+  right: 2rem;
+  font-size: clamp(16px, 2vw, 32px);
   color: white;
+  text-shadow: 1px 1px 2px #000;
 }
 
 /* Question Container */
@@ -75,12 +76,12 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  max-width: 90vw;
+  max-width: 800px;
   text-align: center;
 }
 
 #question-text {
-  font-size: 5vw; /* scales with screen */
+  font-size: clamp(24px, 5vw, 64px);
   text-shadow: 2px 2px 4px #000;
   color: yellow;
   animation: pound 0.5s;
@@ -105,8 +106,8 @@ body {
 }
 
 #answers button, .hold-btn {
-  font-size: 2vw;
-  padding: 1.2vh 2vw;
+  font-size: clamp(14px, 2vw, 28px);
+  padding: 0.8rem 1.5rem;
   background: transparent;
   color: white;
   border: 2px solid yellow;
@@ -127,9 +128,10 @@ body {
   justify-content: flex-start;
   align-items: center;
   padding-top: 5vh;
-  font-size: 2vw;
+  font-size: clamp(16px, 2vw, 28px);
   display: none;
   color: white;
+  overflow-y: auto;
 }
 
 #leaderboard-list { 

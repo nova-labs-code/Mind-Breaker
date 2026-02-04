@@ -53,9 +53,6 @@ playBtn.onclick = async () => {
   playMusic();
   startScreen.remove();
   gameScreen.style.display = 'flex';
-  gameScreen.style.flexDirection = 'column';
-  gameScreen.style.alignItems = 'center';
-  gameScreen.style.justifyContent = 'center';
   
   questions = await loadQuestions();
   startTime = Date.now();

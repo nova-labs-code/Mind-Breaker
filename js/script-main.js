@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let audioIndex = 1;
   const totalTracks = 8;
 
-  const startBtn = document.getElementById('start-btn');
+  const playBtn = document.getElementById('play-btn');
   const questionText = document.getElementById('question-text');
   const answersDiv = document.getElementById('answers');
   const livesDiv = document.getElementById('lives');
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const leaderboardDiv = document.getElementById('leaderboard');
   const leaderboardList = document.getElementById('leaderboard-list');
 
-  // Load all question JSONs
+  // Load all questions JSON
   async function loadQuestions() {
     try {
       const medium = await fetch('questions/medium.json').then(r => r.json());
@@ -28,35 +28,37 @@ document.addEventListener('DOMContentLoaded', () => {
       const trick = await fetch('questions/trick.json').then(r => r.json());
       const playable = await fetch('questions/playable.json').then(r => r.json());
       questions = [...medium, ...trick, ...playable, ...hard];
-      questions.sort((a, b) => a.num - b.num);
-
-      // Enable start button after loading
-      startBtn.disabled = false;
-      startBtn.textContent = "Start Quiz";
+      questions.sort((a, b) => a.num - b.num); // maintain fixed order
     } catch (err) {
       console.error("Error loading questions:", err);
-      startBtn.textContent = "Failed to Load Questions";
+      alert("Failed to load questions.");
     }
   }
 
-  function startQuiz() {
+  async function startGame() {
     username = document.getElementById('username').value.trim();
     if (!username) { alert('Enter a username'); return; }
 
+    // Unique username
     let count = leaderboard.filter(l => l.name.startsWith(username)).length;
     username = count ? `${username}#${count+1}` : username;
 
     startScreen.hidden = true;
     gameScreen.hidden = false;
 
+    lives = 3;
+    current = 0;
     startTime = Date.now();
     updateLives();
     startTimer();
-    showQuestion();
+
     playBackgroundAudio();
+    showQuestion();
   }
 
-  function updateLives() { livesDiv.textContent = '❤️'.repeat(lives); }
+  function updateLives() {
+    livesDiv.textContent = '❤️'.repeat(lives);
+  }
 
   function startTimer() {
     timerInterval = setInterval(() => {
@@ -71,10 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (current >= questions.length) return endQuiz();
     const q = questions[current];
 
-    questionText.hidden = false;
-    questionText.style.opacity = 0; // fade in
-    questionText.textContent = q.q || "No question";
-    setTimeout(() => { questionText.style.opacity = 1; }, 50);
+    questionText.style.opacity = 0;
+    setTimeout(() => { questionText.textContent = q.q; questionText.style.opacity = 1; }, 50);
 
     answersDiv.innerHTML = '';
 
@@ -99,10 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       lives--;
       updateLives();
-      if (lives <= 0) {
-        alert('Game Over!');
-        location.reload();
-      }
+      if (lives <= 0) { alert("Game Over!"); location.reload(); }
     }
   }
 
@@ -135,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  startBtn.onclick = startQuiz;
+  playBtn.addEventListener('click', startGame);
   loadQuestions();
-  updateLives();
 });

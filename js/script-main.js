@@ -20,22 +20,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const leaderboardDiv = document.getElementById('leaderboard');
   const leaderboardList = document.getElementById('leaderboard-list');
 
-  // Load questions
+  // Load all question JSONs
   async function loadQuestions() {
-    const medium = await fetch('questions/medium.json').then(r => r.json());
-    const hard = await fetch('questions/hard.json').then(r => r.json());
-    const trick = await fetch('questions/trick.json').then(r => r.json());
-    const playable = await fetch('questions/playable.json').then(r => r.json());
-    questions = [...medium, ...trick, ...playable, ...hard];
-    questions.sort((a, b) => a.num - b.num);
+    try {
+      const medium = await fetch('questions/medium.json').then(r => r.json());
+      const hard = await fetch('questions/hard.json').then(r => r.json());
+      const trick = await fetch('questions/trick.json').then(r => r.json());
+      const playable = await fetch('questions/playable.json').then(r => r.json());
+      questions = [...medium, ...trick, ...playable, ...hard];
+      questions.sort((a, b) => a.num - b.num);
+
+      // Enable start button after loading
+      startBtn.disabled = false;
+      startBtn.textContent = "Start Quiz";
+    } catch (err) {
+      console.error("Error loading questions:", err);
+      startBtn.textContent = "Failed to Load Questions";
+    }
   }
 
-  // Start quiz
   function startQuiz() {
     username = document.getElementById('username').value.trim();
     if (!username) { alert('Enter a username'); return; }
 
-    // Unique username
     let count = leaderboard.filter(l => l.name.startsWith(username)).length;
     username = count ? `${username}#${count+1}` : username;
 
@@ -46,12 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLives();
     startTimer();
     showQuestion();
-    playBackgroundAudio(); // auto start
+    playBackgroundAudio();
   }
 
-  function updateLives() {
-    livesDiv.textContent = '❤️'.repeat(lives);
-  }
+  function updateLives() { livesDiv.textContent = '❤️'.repeat(lives); }
 
   function startTimer() {
     timerInterval = setInterval(() => {
@@ -67,7 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const q = questions[current];
 
     questionText.hidden = false;
+    questionText.style.opacity = 0; // fade in
     questionText.textContent = q.q || "No question";
+    setTimeout(() => { questionText.style.opacity = 1; }, 50);
 
     answersDiv.innerHTML = '';
 
@@ -115,13 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
     leaderboardDiv.hidden = false;
   }
 
-  // Background audio auto-loop
   function playBackgroundAudio() {
     if (bgAudio && !bgAudio.paused) return;
     bgAudio = new Audio(`music/music${audioIndex}.mp3`);
     bgAudio.volume = 0.5;
     bgAudio.play().catch(e => console.log('Audio blocked:', e));
-
     bgAudio.onended = () => {
       audioIndex++;
       if (audioIndex > totalTracks) audioIndex = 1;
@@ -131,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   startBtn.onclick = startQuiz;
-
   loadQuestions();
   updateLives();
 });

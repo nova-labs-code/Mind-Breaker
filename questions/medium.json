@@ -1,13 +1,13 @@
 [
-  {"num":11,"q":"Hold the button continuously for 2.5 seconds to pass","options":["Fail","Success"],"answer":1,"type":"playable"},
-  {"num":15,"q":"Wait exactly 3 seconds after the button appears, then click it","options":["Too soon","Success"],"answer":1,"type":"playable"},
-  {"num":20,"q":"Click the safe button among 5 buttons","options":["Wrong","Wrong","Success","Wrong","Wrong"],"answer":2,"type":"playable"},
-  {"num":23,"q":"Hold the button continuously for 4 seconds to pass","options":["Fail","Success"],"answer":1,"type":"playable"},
-  {"num":26,"q":"Click the button labeled 'Wrong' instead of 'Correct' to pass","options":["Correct","Wrong"],"answer":1,"type":"playable"},
-  {"num":29,"q":"Hold the button continuously for 5 seconds to pass","options":["Fail","Success"],"answer":1,"type":"playable"},
-  {"num":32,"q":"Wait exactly 2.5 seconds after the button appears, then click it","options":["Too soon","Success"],"answer":1,"type":"playable"},
-  {"num":35,"q":"Click the safe button among 6 buttons before time runs out","options":["Wrong","Wrong","Wrong","Success","Wrong","Wrong"],"answer":3,"type":"playable"},
-  {"num":38,"q":"Hold the button for 1 second while it randomly moves around the screen","options":["Fail","Success"],"answer":1,"type":"playable"},
-  {"num":41,"q":"Click the correct button among 8 buttons while they randomly change positions and labels","options":["Wrong","Wrong","Wrong","Wrong","Success","Wrong","Wrong","Wrong"],"answer":4,"type":"playable"},
-  {"num":44,"q":"Click the button labeled 'Wrong' exactly 1.5 seconds after it appears","options":["Too soon","Success"],"answer":1,"type":"playable"}
+  {"num":11,"q":"Which number comes next: 1, 2, 4, 8, ?","options":["10","12","16","14"],"answer":2,"type":"normal"},
+  {"num":15,"q":"A rooster lays an egg on the roof. Which way does it roll?","options":["Left","Right","Roosters don’t lay eggs","Down"],"answer":2,"type":"normal"},
+  {"num":20,"q":"Some months have 31 days, some have 30. How many have 28?","options":["1","12","0","Depends"],"answer":1,"type":"normal"},
+  {"num":23,"q":"If a plane crashes on the border of two countries, where do they bury the survivors?","options":["Country 1","Country 2","They bury them both","Survivors aren’t buried"],"answer":3,"type":"normal"},
+  {"num":26,"q":"Which word is misspelled in every dictionary?","options":["Every","Dictionary","Misspelled","None"],"answer":2,"type":"normal"},
+  {"num":29,"q":"Some months have 31 days. Some have 30. How many have 28?","options":["All","One","12","0"],"answer":0,"type":"normal"},
+  {"num":32,"q":"If it takes 5 machines 5 minutes to make 5 items, how long for 100 machines to make 100 items?","options":["5","100","20","10"],"answer":0,"type":"normal"},
+  {"num":35,"q":"What can travel around the world while staying in a corner?","options":["Stamp","Sun","Moon","Wind"],"answer":0,"type":"normal"},
+  {"num":38,"q":"Some months have 31 days. Some have 30. Which has 28?","options":["February","All","None","January"],"answer":1,"type":"normal"},
+  {"num":41,"q":"If you try to fail and succeed, which have you done?","options":["Failed","Succeeded","Both","Neither"],"answer":1,"type":"normal"},
+  {"num":44,"q":"Before Mount Everest was discovered, what was the tallest mountain?","options":["Mount Everest","K2","Kangchenjunga","Unknown"],"answer":0,"type":"normal"}
 ]

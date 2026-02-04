@@ -1,29 +1,30 @@
 body {
   font-family: "Segoe UI", Arial, sans-serif;
-  background: #111;
-  color: #eee;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  background: #111;
+  color: #eee;
 }
 
-.game-container {
-  max-width: 600px;
-  padding: 20px;
+#start-screen, #game-screen, #leaderboard {
   text-align: center;
+  padding: 20px;
 }
 
-#question {
-  font-size: 1.2em;
-  margin: 20px 0;
+#top-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
 }
 
-#options button {
-  margin: 5px;
-  padding: 10px 20px;
-  font-size: 1em;
-  cursor: pointer;
+#username {
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+#credits {
+  margin-top: 10px;
+  font-style: italic;
 }

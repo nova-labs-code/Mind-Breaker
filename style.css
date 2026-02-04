@@ -3,9 +3,10 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Press Start 2P', sans-serif;
-  background: #1f1c2c; /* dark solid background for clarity */
-  color: white;
-  overflow: hidden; /* no scrolling */
+  background: #111;
+  color: #fff;
+  overflow: hidden;
+  text-align: center;
 }
 
 /* --- Start Screen --- */
@@ -16,42 +17,40 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(180deg, #ff4a4a, #ffbd4a);
 }
 
 #title-text {
   font-size: 3em;
-  color: #fff;
   margin-bottom: 20px;
-  text-shadow: 2px 2px 8px #000;
+  color: #fff;
+  text-shadow: 2px 2px 4px #000;
 }
 
 #username {
-  font-family: 'Press Start 2P', sans-serif;
   font-size: 1.2em;
   padding: 10px;
   border-radius: 8px;
   border: 2px solid #fff;
   margin-bottom: 15px;
+  background: transparent;
+  color: #fff;
   text-align: center;
 }
 
 #play-btn {
-  font-family: 'Press Start 2P', sans-serif;
   font-size: 1.5em;
   padding: 15px 30px;
   border-radius: 12px;
   border: 2px solid #fff;
   cursor: pointer;
-  background: linear-gradient(135deg, #4affaa, #4a90ff);
-  color: white;
-  text-shadow: 1px 1px 3px #000;
-  transition: transform 0.2s, background 0.3s;
+  background: transparent;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+  transition: transform 0.2s;
 }
 
 #play-btn:hover {
   transform: scale(1.1);
-  background: linear-gradient(135deg, #ff4a4a, #ffbd4a);
 }
 
 /* --- Game Screen --- */
@@ -59,7 +58,7 @@ body {
   width: 100vw;
   height: 100vh;
   position: relative;
-  background: #222; /* simple dark background */
+  display: none; /* hidden until quiz starts */
 }
 
 /* Lives & Timer */
@@ -83,17 +82,15 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  text-align: center;
   width: 90%;
   max-width: 800px;
 }
 
 /* --- Question Text --- */
 #question-text {
-  font-family: 'Press Start 2P', sans-serif;
   font-size: 3em;
-  color: #fffa;
-  text-shadow: 2px 2px 5px #000;
+  color: #fff;
+  text-shadow: 2px 2px 4px #000;
   animation: pound 0.5s;
   margin-bottom: 30px;
 }
@@ -116,40 +113,36 @@ body {
 }
 
 #answers button {
-  font-family: 'Press Start 2P', sans-serif;
   font-size: 1.3em;
   padding: 12px 25px;
-  background: linear-gradient(135deg, #ff4a4a, #ffbd4a);
-  color: white;
+  background: transparent;
+  color: #fff;
   border: 2px solid #fff;
   border-radius: 12px;
   cursor: pointer;
   text-shadow: 1px 1px 2px #000;
-  transition: transform 0.2s, background 0.3s;
+  transition: transform 0.2s;
 }
 
 #answers button:hover {
   transform: scale(1.1);
-  background: linear-gradient(135deg, #4affaa, #4a90ff);
 }
 
-/* --- Mini Games Buttons --- */
+/* --- Mini Game Buttons --- */
 .hold-btn {
-  font-family: 'Press Start 2P', sans-serif;
   font-size: 1.3em;
   padding: 15px 30px;
   border-radius: 12px;
   border: 2px solid #fff;
   cursor: pointer;
-  background: linear-gradient(135deg, #f3a683, #f7d794);
-  color: #222;
-  text-shadow: 1px 1px 2px #fff;
-  transition: transform 0.2s, background 0.3s;
+  background: transparent;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+  transition: transform 0.2s;
 }
 
 .hold-btn:hover {
   transform: scale(1.1);
-  background: linear-gradient(135deg, #778beb, #e77f67);
 }
 
 /* --- Leaderboard --- */
@@ -162,7 +155,7 @@ body {
   align-items: center;
   padding-top: 50px;
   font-size: 1.2em;
-  background: #111;
+  display: none;
 }
 
 #leaderboard-list {

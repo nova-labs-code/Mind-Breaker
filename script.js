@@ -34,7 +34,7 @@ music.addEventListener('ended', ()=>{
   music.play();
 });
 
-// --- Load all JSON questions ---
+// --- Load JSON Questions ---
 async function loadQuestions() {
   try {
     loadingDiv.style.display = 'block';
@@ -63,7 +63,7 @@ playBtn.addEventListener('click', async () => {
   gameScreen.style.display = 'block';
   await loadQuestions();
 
-  music.play(); // Start first track
+  music.play(); 
   startTime = Date.now();
   timerInterval = setInterval(updateTimer, 100);
   showQuestion(username);
@@ -103,7 +103,6 @@ function showQuestion(username){
 function checkAnswer(selected, username){
   const q = questions[currentIndex];
   if(selected !== q.answer){
-    alert('Wrong! Reloading...');
     location.reload();
     return;
   }

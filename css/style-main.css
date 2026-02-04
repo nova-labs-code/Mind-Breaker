@@ -6,7 +6,7 @@ body {
   color: #f0f0f0;
 }
 
-#start-screen, #game-screen, #leaderboard {
+.center-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,20 +16,24 @@ body {
   padding: 1em;
 }
 
-input#username {
-  padding: 0.5em 1em;
-  font-size: 1em;
-  border-radius: 5px;
-  border: 1px solid #888;
-  background-color: #222;
-  color: #fff;
-  margin-bottom: 1em;
+#question-container {
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
 }
 
 #question-text {
-  font-size: 1.5em;
+  font-size: 1.6em;
   font-weight: bold;
   margin-bottom: 1em;
   min-height: 3em;
-  text-align: center;
+  transition: opacity 0.3s ease;
+}
+
+#info-bar {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1em;
+  font-size: 1.1em;
 }

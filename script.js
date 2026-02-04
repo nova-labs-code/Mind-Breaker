@@ -1,3 +1,4 @@
+// --- Elements ---
 const playBtn = document.getElementById('play-btn');
 const startScreen = document.getElementById('start-screen');
 const usernameInput = document.getElementById('username');
@@ -16,18 +17,11 @@ let timerInterval;
 
 // --- Music Playlist ---
 const musicFiles = [
-  'music/music1.mp3',
-  'music/music2.mp3',
-  'music/music3.mp3',
-  'music/music4.mp3',
-  'music/music5.mp3',
-  'music/music6.mp3',
-  'music/music7.mp3',
-  'music/music8.mp3'
+  'music/music1.mp3','music/music2.mp3','music/music3.mp3','music/music4.mp3',
+  'music/music5.mp3','music/music6.mp3','music/music7.mp3','music/music8.mp3'
 ];
 let currentTrack = 0;
 let music = new Audio(musicFiles[currentTrack]);
-
 music.addEventListener('ended', ()=>{
   currentTrack = (currentTrack+1)%musicFiles.length;
   music.src = musicFiles[currentTrack];
@@ -50,7 +44,7 @@ async function loadQuestions() {
     loadingDiv.style.display = 'none';
   } catch(err){
     console.error(err);
-    questionText.innerText = 'Failed to load questions. Check console.';
+    questionText.innerText = 'Failed to load questions';
   }
 }
 
@@ -58,14 +52,12 @@ async function loadQuestions() {
 playBtn.addEventListener('click', async () => {
   const username = usernameInput.value.trim();
   if(!username) return alert('Enter username');
-
   startScreen.remove();
   gameScreen.style.display = 'block';
   await loadQuestions();
-
-  music.play(); 
+  music.play();
   startTime = Date.now();
-  timerInterval = setInterval(updateTimer, 100);
+  timerInterval = setInterval(updateTimer,100);
   showQuestion(username);
 });
 
@@ -77,8 +69,7 @@ function updateTimer(){
 
 // --- Show Question ---
 function showQuestion(username){
-  if(currentIndex >= questions.length) return endQuiz(username);
-
+  if(currentIndex>=questions.length) return endQuiz(username);
   const q = questions[currentIndex];
   questionText.innerText = q.q;
   answersDiv.innerHTML = '';
@@ -88,11 +79,11 @@ function showQuestion(username){
       const btn = document.createElement('button');
       btn.innerText = opt;
       btn.addEventListener('click', ()=>checkAnswer(i,username));
+      btn.classList.add('pound-btn');
+      btn.style.animationDelay = `${i*0.1}s`;
       answersDiv.appendChild(btn);
     });
-  } else if(q.type==='mini'){
-    createMiniGame(q,username);
-  }
+  } else if(q.type==='mini'){ createMiniGame(q,username); }
 
   questionText.style.animation = 'none';
   void questionText.offsetWidth;
@@ -102,72 +93,57 @@ function showQuestion(username){
 // --- Check Normal Answer ---
 function checkAnswer(selected, username){
   const q = questions[currentIndex];
-  if(selected !== q.answer){
-    location.reload();
-    return;
-  }
+  if(selected!==q.answer){ location.reload(); return; }
   currentIndex++;
   showQuestion(username);
 }
 
 // --- Mini-games ---
 function createMiniGame(q, username){
-  answersDiv.innerHTML = '';
+  answersDiv.innerHTML='';
   if(q.mini==='hold'){
     const btn = document.createElement('button');
-    btn.className='hold-btn';
+    btn.className='hold-btn pound-btn';
     btn.innerText='Hold me';
+    btn.style.animationDelay='0s';
     answersDiv.appendChild(btn);
-
-    btn.addEventListener('mousedown', ()=>{
+    btn.addEventListener('mousedown',()=>{
       const start = Date.now();
       const mouseUp = ()=>{
         const held = Date.now()-start;
-        if(held >= q.duration){
-          currentIndex++;
-          showQuestion(username);
-        } else location.reload();
+        if(held>=q.duration){ currentIndex++; showQuestion(username); }
+        else location.reload();
         btn.removeEventListener('mouseup', mouseUp);
       };
-      btn.addEventListener('mouseup', mouseUp);
+      btn.addEventListener('mouseup',mouseUp);
     });
-
   } else if(q.mini==='wait'){
     const btn = document.createElement('button');
-    btn.className='hold-btn';
+    btn.className='hold-btn pound-btn';
     btn.innerText='Click at the right time';
     answersDiv.appendChild(btn);
-
-    btn.addEventListener('click', ()=>{
-      setTimeout(()=>{
-        currentIndex++;
-        showQuestion(username);
-      }, q.duration);
+    btn.addEventListener('click',()=>{
+      setTimeout(()=>{ currentIndex++; showQuestion(username); },q.duration);
     });
-
   } else if(q.mini==='avoid'){
     for(let i=0;i<q.buttons;i++){
-      const b = document.createElement('button');
+      const b=document.createElement('button');
+      b.className='pound-btn';
       b.innerText=`Button ${i+1}`;
+      b.style.animationDelay=`${i*0.1}s`;
       b.addEventListener('click',()=>{
-        if(i===q.safe){
-          currentIndex++;
-          showQuestion(username);
-        } else location.reload();
+        if(i===q.safe){ currentIndex++; showQuestion(username); }
+        else location.reload();
       });
       answersDiv.appendChild(b);
     }
-
   } else if(q.mini==='reverse'){
     const btn = document.createElement('button');
-    btn.className='hold-btn';
+    btn.className='hold-btn pound-btn';
     btn.innerText="Click 'Wrong'";
+    btn.style.animationDelay='0s';
     answersDiv.appendChild(btn);
-
-    btn.addEventListener('click', ()=>{
-      currentIndex++;
-      showQuestion(username);
-    });
+    btn.addEventListener('click',()=>{ currentIndex++; showQuestion(username); });
   }
 }
 
@@ -177,8 +153,7 @@ function endQuiz(username){
   const elapsed = ((Date.now()-startTime)/1000).toFixed(2);
   gameScreen.style.display='none';
   leaderboard.style.display='flex';
-
-  const li = document.createElement('li');
-  li.innerText = `${username} - ${elapsed}s`;
+  const li=document.createElement('li');
+  li.innerText=`${username} - ${elapsed}s`;
   leaderboardList.appendChild(li);
 }

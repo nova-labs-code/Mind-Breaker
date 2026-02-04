@@ -22,22 +22,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const leaderboardDiv = document.getElementById('leaderboard');
   const leaderboardList = document.getElementById('leaderboard-list');
 
-  // Always visible play button
+  // Always visible Play button
   playBtn.textContent = "Play";
   playBtn.disabled = false;
 
-  // Load all JSON questions
+  // Load all JSONs from questions/ folder
   async function loadQuestions() {
     try {
-      const medium = await fetch('medium.json').then(r => r.json());
-      const hard = await fetch('hard.json').then(r => r.json());
-      const trick = await fetch('trick.json').then(r => r.json());
-      const playable = await fetch('playable.json').then(r => r.json());
+      const medium = await fetch('questions/medium.json').then(r => r.json());
+      const hard = await fetch('questions/hard.json').then(r => r.json());
+      const trick = await fetch('questions/trick.json').then(r => r.json());
+      const playable = await fetch('questions/playable.json').then(r => r.json());
       questions = [...medium, ...trick, ...playable, ...hard];
       questions.sort((a,b) => a.num - b.num);
+      console.log("Questions loaded:", questions.length);
     } catch (err) {
       console.error("Failed to load questions:", err);
-      alert("Could not load questions. Ensure JSON files are in the root.");
+      alert("Could not load questions. Make sure JSON files are in the questions/ folder.");
     }
   }
 
@@ -70,12 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 700);
   }
 
-  // Update lives display
   function updateLives() {
     livesDiv.textContent = '❤️'.repeat(lives);
   }
 
-  // Timer functions
   function startTimer() {
     timerInterval = setInterval(() => {
       const elapsed = ((Date.now() - startTime)/1000).toFixed(2);
@@ -87,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
     clearInterval(timerInterval);
   }
 
-  // Show question with pound animation
   function showQuestion() {
     if (current >= questions.length) return endQuiz();
     const q = questions[current];
@@ -142,16 +140,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Background audio loop
+  // Background audio loop in music/ folder
   function playBackgroundAudio() {
     if (bgAudio && !bgAudio.paused) return;
-    bgAudio = new Audio(`music${audioIndex}.mp3`);
+    bgAudio = new Audio(`music/music${audioIndex}.mp3`);
     bgAudio.volume = 0.5;
     bgAudio.play().catch(e => console.log('Audio blocked:', e));
     bgAudio.onended = () => {
       audioIndex++;
       if (audioIndex > totalTracks) audioIndex = 1;
-      bgAudio.src = `music${audioIndex}.mp3`;
+      bgAudio.src = `music/music${audioIndex}.mp3`;
       bgAudio.play().catch(e => console.log('Audio blocked:', e));
     };
   }

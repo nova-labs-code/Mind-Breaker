@@ -3,26 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>The Mind Breaker Quiz</title>
+<title>Mind Breaker Quiz</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- START SCREEN -->
+<!-- ==================== START SCREEN ==================== -->
 <div id="start-screen">
-  <h1>THE MIND BREAKER</h1>
-  <input type="text" id="username" placeholder="Enter username" />
-  <button id="play-btn">PLAY</button>
+    <div id="title">
+        <span style="color:#ff0000">M</span>
+        <span style="color:#ff7f00">i</span>
+        <span style="color:#ffff00">n</span>
+        <span style="color:#00ff00">d</span>
+        <span style="color:#0000ff"> </span>
+        <span style="color:#4b0082">B</span>
+        <span style="color:#8f00ff">r</span>
+        <span style="color:#ff1493">e</span>
+        <span style="color:#00ffff">a</span>
+        <span style="color:#ff4500">k</span>
+        <span style="color:#32cd32">e</span>
+        <span style="color:#ffd700">r</span>
+    </div>
+    <input type="text" id="username" placeholder="Enter username">
+    <button id="play-btn">Play</button>
 </div>
 
-<!-- GAME SCREEN -->
+<!-- ==================== GAME SCREEN ==================== -->
 <div id="game-screen">
-  <div id="question-container">
-    <div id="question-text"></div>
-    <div id="answers"></div>
-  </div>
-  <div id="timer"></div>
-  <div id="lives"></div>
+    <div id="lives"></div>
+    <div id="timer">0.0s</div>
+    <div id="question-container">
+        <div id="question-number"></div>
+        <div id="question-text"></div>
+        <div id="answers"></div>
+    </div>
 </div>
 
 <script src="script.js"></script>

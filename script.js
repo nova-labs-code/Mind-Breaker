@@ -17,6 +17,7 @@ let startTime;
 let timerInterval;
 let username;
 
+// ==================== LOAD QUESTIONS ====================
 async function loadQuestions() {
     const files = ['medium','hard','trick','mind-tricks'];
     let all = [];
@@ -32,40 +33,48 @@ async function loadQuestions() {
     return all;
 }
 
+// ==================== START QUIZ ====================
 playBtn.onclick = async () => {
     username = usernameInput.value.trim();
-    if (!username) return alert("Enter a username!");
-    bgMusic.play();
+    if (!username) return alert("Enter username!");
 
-    startScreen.style.transition = 'opacity 0.5s';
-    startScreen.style.opacity = 0;
+    // Play background music
+    try { await bgMusic.play(); } 
+    catch(e){ console.warn("Music failed to play", e); }
+
+    startScreen.style.transition='opacity 0.5s';
+    startScreen.style.opacity=0;
     setTimeout(()=>startScreen.remove(),500);
 
-    gameScreen.style.display = 'flex';
+    gameScreen.style.display='flex';
 
     questions = await loadQuestions();
-    if (!questions.length) return alert("No questions loaded!");
+    if(!questions.length) return alert("No questions loaded!");
+
     startTime = Date.now();
     startTimer();
     updateLives();
     showQuestion();
 };
 
+// ==================== TIMER ====================
 function startTimer() {
     timerInterval = setInterval(()=>{
         timerEl.textContent = ((Date.now()-startTime)/1000).toFixed(1)+'s';
     },100);
 }
 
+// ==================== LIVES ====================
 function updateLives() {
     livesEl.textContent = '❤ '.repeat(lives);
 }
 
-function loseLife() {
+function loseLife(){
     flash('wrong'); shake(); lives--; updateLives();
     if(lives<=0) location.reload();
 }
 
+// ==================== FEEDBACK ====================
 function flash(type){
     document.body.classList.add(type);
     setTimeout(()=>document.body.classList.remove(type),150);
@@ -77,6 +86,7 @@ function shake(){
     questionContainer.classList.add('shake');
 }
 
+// ==================== QUESTIONS ====================
 function showQuestion(){
     if(currentIndex>=questions.length){ finishQuiz(); return; }
 
@@ -89,25 +99,26 @@ function showQuestion(){
     questionText.style.animation='pound 0.4s';
 
     q.options.forEach((opt,i)=>{
-        const btn = document.createElement('button');
+        const btn=document.createElement('button');
         btn.textContent=opt;
-        btn.onclick=()=>{
-            if(i===q.answer){ flash('correct'); nextQuestion(); } else { loseLife(); }
-        };
+        btn.onclick=()=>{ if(i===q.answer){ flash('correct'); nextQuestion(); } else { loseLife(); } };
         answersDiv.appendChild(btn);
     });
 }
 
 function nextQuestion(){ currentIndex++; showQuestion(); }
 
+// ==================== FINISH QUIZ ====================
 function finishQuiz(){
     clearInterval(timerInterval);
     const timeTaken=((Date.now()-startTime)/1000).toFixed(2);
-    saveScore(username,timeTaken); showLeaderboard();
+    saveScore(username,timeTaken);
+    showLeaderboard();
 }
 
+// ==================== LEADERBOARD ====================
 function saveScore(user,time){
-    const lb = JSON.parse(localStorage.getItem('leaderboard')||'[]');
+    const lb=JSON.parse(localStorage.getItem('leaderboard')||'[]');
     let name=user;
     const dup=lb.filter(e=>e.username.startsWith(user)).length;
     if(dup>0) name=user+'#'+(dup+1);

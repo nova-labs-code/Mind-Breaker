@@ -1,102 +1,81 @@
-function runMiniGame(question, onSuccess, onFail) {
-  const box = document.getElementById("answers");
-  clearElement(box);
+function runMiniGame(q) {
+  const questionText = document.getElementById('question-text');
+  const answersDiv = document.getElementById('answers');
+  answersDiv.innerHTML = '';
 
-  // HOLD
-  if (question.mini === "hold") {
-    const btn = document.createElement("button");
-    btn.textContent = "Hold";
-    let start;
-    btn.onmousedown = () => start = Date.now();
-    btn.onmouseup = () => {
-      if (Date.now() - start >= question.duration) onSuccess();
-      else onFail();
-    };
-    box.appendChild(btn);
-  }
+  switch(q.mini) {
+    case 'hold':
+      const holdBtn = document.createElement('button');
+      holdBtn.textContent = 'Hold';
+      let holdTimer;
+      holdBtn.onmousedown = () => holdTimer = setTimeout(()=>{current++; showQuestion();}, q.duration);
+      holdBtn.onmouseup = () => clearTimeout(holdTimer);
+      answersDiv.appendChild(holdBtn);
+      break;
 
-  // WAIT & CLICK
-  if (question.mini === "wait") {
-    const btn = document.createElement("button");
-    btn.textContent = "Click after waiting";
-    const start = Date.now();
-    btn.onclick = () => {
-      if (Math.abs(Date.now() - start - question.duration) < 300) onSuccess();
-      else onFail();
-    };
-    box.appendChild(btn);
-  }
+    case 'wait':
+      const waitBtn = document.createElement('button');
+      waitBtn.textContent = 'Click at right time';
+      const startClick = Date.now();
+      waitBtn.onclick = () => {
+        if (Date.now() - startClick < q.duration) { lives--; updateLives(); if(lives<=0) location.reload(); }
+        else { current++; showQuestion(); }
+      };
+      answersDiv.appendChild(waitBtn);
+      break;
 
-  // AVOID BUTTONS
-  if (question.mini === "avoid") {
-    for (let i = 0; i < question.buttons; i++) {
-      const b = document.createElement("button");
-      b.textContent = "?";
-      b.onclick = () => i === question.safe ? onSuccess() : onFail();
-      box.appendChild(b);
-    }
-  }
+    case 'avoid':
+      for (let i=0;i<q.buttons;i++){
+        const b = document.createElement('button');
+        b.textContent = `Btn ${i+1}`;
+        b.onclick = () => {
+          if(i===q.safe){ current++; showQuestion(); }
+          else { lives--; updateLives(); if(lives<=0) location.reload(); }
+        };
+        answersDiv.appendChild(b);
+      }
+      break;
 
-  // REVERSE CLICK
-  if (question.mini === "reverse") {
-    ["Correct","Wrong"].forEach((txt,i)=>{
-      const b=document.createElement("button");
-      b.textContent=txt;
-      b.onclick=()=> i===1 ? onSuccess() : onFail();
-      box.appendChild(b);
-    });
-  }
+    case 'hold-move':
+      const moveBtn = document.createElement('button');
+      moveBtn.textContent = 'Hold me';
+      moveBtn.style.position = 'absolute';
+      moveBtn.style.top = Math.random()*200+'px';
+      moveBtn.style.left = Math.random()*300+'px';
+      let holdTimer2;
+      moveBtn.onmousedown = () => holdTimer2 = setTimeout(()=>{current++; showQuestion();}, q.duration);
+      moveBtn.onmouseup = () => clearTimeout(holdTimer2);
+      answersDiv.appendChild(moveBtn);
+      break;
 
-  // HOLD + MOVE
-  if (question.mini === "hold-move") {
-    const btn = document.createElement("button");
-    btn.textContent = "Hold";
-    btn.style.position="absolute";
-    btn.style.top="50px"; btn.style.left="50px";
-    document.body.appendChild(btn);
+    case 'avoid-move':
+      for (let i=0;i<q.buttons;i++){
+        const b = document.createElement('button');
+        b.textContent = `Btn ${i+1}`;
+        b.style.position = 'absolute';
+        b.style.top = Math.random()*200+'px';
+        b.style.left = Math.random()*300+'px';
+        b.onclick = () => { if(i===q.safe){current++;showQuestion();} else {lives--;updateLives();if(lives<=0) location.reload();}};
+        answersDiv.appendChild(b);
+      }
+      break;
 
-    let start;
-    const interval = setInterval(() => {
-      btn.style.top = Math.random()*window.innerHeight + "px";
-      btn.style.left = Math.random()*window.innerWidth + "px";
-    },100);
+    case 'reverse':
+      const revBtn = document.createElement('button');
+      revBtn.textContent = 'Click me';
+      revBtn.onclick = () => { current++; showQuestion(); };
+      answersDiv.appendChild(revBtn);
+      break;
 
-    btn.onmousedown = () => start = Date.now();
-    btn.onmouseup = () => {
-      clearInterval(interval);
-      btn.remove();
-      if (Date.now()-start >= question.duration) onSuccess();
-      else onFail();
-    };
-  }
-
-  // AVOID + MOVE
-  if (question.mini === "avoid-move") {
-    for (let i=0;i<question.buttons;i++){
-      const b=document.createElement("button");
-      b.textContent="?";
-      b.style.position="absolute";
-      b.style.top=Math.random()*window.innerHeight+"px";
-      b.style.left=Math.random()*window.innerWidth+"px";
-      document.body.appendChild(b);
-      if(i===question.safe) b.onclick=()=>{clearAvoidMove(); onSuccess();}
-      else b.onclick=()=>{clearAvoidMove(); onFail();}
-    }
-    function clearAvoidMove(){
-      const btns=document.querySelectorAll("#answers button, body>button");
-      btns.forEach(b=>b.remove());
-    }
-  }
-
-  // REVERSE + WAIT
-  if (question.mini === "reverse-wait") {
-    const btn=document.createElement("button");
-    btn.textContent="Click the 'Wrong' button after "+question.duration/1000+"s";
-    btn.onclick=()=>{
-      const elapsed=Date.now()-startTime;
-      if(Math.abs(elapsed-question.duration)<300) onSuccess();
-      else onFail();
-    };
-    box.appendChild(btn);
+    case 'reverse-wait':
+      const rwBtn = document.createElement('button');
+      rwBtn.textContent = 'Click after delay';
+      const startRw = Date.now();
+      rwBtn.onclick = () => {
+        if(Date.now()-startRw < q.duration){ lives--; updateLives(); if(lives<=0) location.reload(); }
+        else { current++; showQuestion(); }
+      };
+      answersDiv.appendChild(rwBtn);
+      break;
   }
 }

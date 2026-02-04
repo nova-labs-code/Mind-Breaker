@@ -13,10 +13,28 @@ let questions = [];
 let currentIndex = 0;
 let startTime;
 let timerInterval;
-let music = new Audio('music/music1.mp3');
-music.loop = true;
 
-// Fetch all four JSONs
+// --- Music Playlist ---
+const musicFiles = [
+  'music/music1.mp3',
+  'music/music2.mp3',
+  'music/music3.mp3',
+  'music/music4.mp3',
+  'music/music5.mp3',
+  'music/music6.mp3',
+  'music/music7.mp3',
+  'music/music8.mp3'
+];
+let currentTrack = 0;
+let music = new Audio(musicFiles[currentTrack]);
+
+music.addEventListener('ended', ()=>{
+  currentTrack = (currentTrack+1)%musicFiles.length;
+  music.src = musicFiles[currentTrack];
+  music.play();
+});
+
+// --- Load all JSON questions ---
 async function loadQuestions() {
   try {
     loadingDiv.style.display = 'block';
@@ -28,7 +46,7 @@ async function loadQuestions() {
       const qs = await res.json();
       allQuestions.push(...qs);
     }
-    questions = allQuestions.sort((a,b)=>a.num - b.num);
+    questions = allQuestions.sort((a,b)=>a.num-b.num);
     loadingDiv.style.display = 'none';
   } catch(err){
     console.error(err);
@@ -36,7 +54,7 @@ async function loadQuestions() {
   }
 }
 
-// Start Quiz
+// --- Start Quiz ---
 playBtn.addEventListener('click', async () => {
   const username = usernameInput.value.trim();
   if(!username) return alert('Enter username');
@@ -45,18 +63,19 @@ playBtn.addEventListener('click', async () => {
   gameScreen.style.display = 'block';
   await loadQuestions();
 
-  music.play();
+  music.play(); // Start first track
   startTime = Date.now();
   timerInterval = setInterval(updateTimer, 100);
   showQuestion(username);
 });
 
+// --- Timer ---
 function updateTimer(){
   const elapsed = ((Date.now() - startTime)/1000).toFixed(2);
   timerDiv.innerText = `Time: ${elapsed}s`;
 }
 
-// Show Question
+// --- Show Question ---
 function showQuestion(username){
   if(currentIndex >= questions.length) return endQuiz(username);
 
@@ -80,7 +99,7 @@ function showQuestion(username){
   questionText.style.animation = 'pound 0.5s';
 }
 
-// Check Normal Answer
+// --- Check Normal Answer ---
 function checkAnswer(selected, username){
   const q = questions[currentIndex];
   if(selected !== q.answer){
@@ -92,7 +111,7 @@ function checkAnswer(selected, username){
   showQuestion(username);
 }
 
-// Mini-games
+// --- Mini-games ---
 function createMiniGame(q, username){
   answersDiv.innerHTML = '';
   if(q.mini==='hold'){
@@ -108,7 +127,7 @@ function createMiniGame(q, username){
         if(held >= q.duration){
           currentIndex++;
           showQuestion(username);
-        } else { location.reload(); }
+        } else location.reload();
         btn.removeEventListener('mouseup', mouseUp);
       };
       btn.addEventListener('mouseup', mouseUp);
@@ -135,7 +154,7 @@ function createMiniGame(q, username){
         if(i===q.safe){
           currentIndex++;
           showQuestion(username);
-        } else { location.reload(); }
+        } else location.reload();
       });
       answersDiv.appendChild(b);
     }
@@ -153,7 +172,7 @@ function createMiniGame(q, username){
   }
 }
 
-// End Quiz / Leaderboard
+// --- End Quiz / Leaderboard ---
 function endQuiz(username){
   clearInterval(timerInterval);
   const elapsed = ((Date.now()-startTime)/1000).toFixed(2);

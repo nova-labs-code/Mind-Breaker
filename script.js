@@ -122,15 +122,41 @@ function renderNormal(q) {
 
 /* ================= MINI GAMES ================= */
 function renderMini(q) {
+  answersDiv.innerHTML = ''; // ensure buttons appear
+
+  // --- HOLD ---
   if (q.mini === 'hold') {
     const btn = document.createElement('button');
     btn.textContent = 'HOLD';
     let timer;
-    btn.onmousedown = ()=>timer=setTimeout(()=>{flash('correct');next();}, q.duration);
-    btn.onmouseup = btn.onmouseleave = ()=>clearTimeout(timer);
+    btn.onmousedown = () => timer = setTimeout(()=>{flash('correct');next();}, q.duration);
+    btn.onmouseup = btn.onmouseleave = () => clearTimeout(timer);
     answersDiv.appendChild(btn);
   }
+
+  // --- WAIT ---
   if (q.mini === 'wait') {
+    const btn = document.createElement('button');
+    btn.textContent = 'CLICK';
+    const start = Date.now();
+    btn.onclick = () => Math.abs(Date.now()-start-q.duration)<200
+      ? (flash('correct'), next())
+      : loseLife();
+    answersDiv.appendChild(btn);
+  }
+
+  // --- REVERSE ---
+  if (q.mini === 'reverse') {
+    ['Correct','Wrong'].forEach(txt=>{
+      const btn = document.createElement('button');
+      btn.textContent = txt;
+      btn.onclick = ()=> txt==='Wrong'? (flash('correct'), next()) : loseLife();
+      answersDiv.appendChild(btn);
+    });
+  }
+
+  // --- REVERSE-WAIT ---
+  if (q.mini === 'reverse-wait') {
     const btn = document.createElement('button');
     btn.textContent = 'CLICK';
     const start = Date.now();
@@ -141,13 +167,47 @@ function renderMini(q) {
     };
     answersDiv.appendChild(btn);
   }
-  if (q.mini === 'reverse') {
-    ['Correct','Wrong'].forEach(txt=>{
+
+  // --- AVOID ---
+  if (q.mini === 'avoid') {
+    for (let i=1;i<=q.buttons;i++){
       const btn = document.createElement('button');
-      btn.textContent = txt;
-      btn.onclick = ()=> txt==='Wrong'? (flash('correct'), next()) : loseLife();
+      btn.textContent = 'Button '+i;
+      btn.onclick = ()=> i===q.safe ? (flash('correct'), next()) : loseLife();
       answersDiv.appendChild(btn);
-    });
+    }
+  }
+
+  // --- HOLD-MOVE ---
+  if (q.mini === 'hold-move') {
+    const btn = document.createElement('button');
+    btn.textContent = 'HOLD';
+    let timer;
+    btn.style.position = 'absolute';
+    const move = () => {
+      btn.style.left = Math.random()*(answersDiv.clientWidth-100)+'px';
+      btn.style.top = Math.random()*(answersDiv.clientHeight-50)+'px';
+    };
+    const interval = setInterval(move,100);
+    btn.onmousedown = () => timer = setTimeout(()=>{clearInterval(interval); flash('correct'); next();}, q.duration);
+    btn.onmouseup = btn.onmouseleave = () => clearTimeout(timer);
+    answersDiv.appendChild(btn);
+  }
+
+  // --- AVOID-MOVE ---
+  if (q.mini === 'avoid-move') {
+    for (let i=1;i<=q.buttons;i++){
+      const btn = document.createElement('button');
+      btn.textContent = 'Button '+i;
+      btn.style.position = 'absolute';
+      const move = () => {
+        btn.style.left = Math.random()*(answersDiv.clientWidth-100)+'px';
+        btn.style.top = Math.random()*(answersDiv.clientHeight-50)+'px';
+      };
+      setInterval(move,150);
+      btn.onclick = ()=> i===q.safe ? (flash('correct'), next()) : loseLife();
+      answersDiv.appendChild(btn);
+    }
   }
 }
 
@@ -158,47 +218,38 @@ function next() {
   else showQuestion();
 }
 
-/* ================= FINISH ================= */
+/* ================= FINISH / LEADERBOARD ================= */
 function finishQuiz() {
   clearInterval(timerInterval);
-  const timeTaken = ((Date.now() - startTime)/1000).toFixed(2);
-
+  const timeTaken = ((Date.now()-startTime)/1000).toFixed(2);
   saveScore(username,timeTaken);
   showLeaderboard();
 }
 
-/* ================= LEADERBOARD ================= */
-function saveScore(user, time) {
+function saveScore(user,time) {
   const lb = JSON.parse(localStorage.getItem('leaderboard')||'[]');
-
-  // Check for existing usernames, add #N if duplicate
   let name = user;
   let dup = lb.filter(e=>e.username.startsWith(user)).length;
   if(dup>0) name = user+'#'+(dup+1);
-
   lb.push({username:name,time:parseFloat(time)});
   lb.sort((a,b)=>a.time-b.time);
-
-  if(lb.length>1000) lb.length=1000; // limit to 1000
+  if(lb.length>1000) lb.length=1000;
   localStorage.setItem('leaderboard',JSON.stringify(lb));
 }
 
 function showLeaderboard() {
   gameScreen.innerHTML = '<h2>LEADERBOARD</h2>';
   const lb = JSON.parse(localStorage.getItem('leaderboard')||'[]');
-
   const table = document.createElement('ol');
   table.style.color='yellow';
   table.style.fontSize='1rem';
   table.style.maxHeight='80vh';
   table.style.overflowY='auto';
   table.style.padding='0 1rem';
-
   lb.forEach(entry=>{
     const li = document.createElement('li');
     li.textContent = `${entry.username} — ${entry.time}s`;
     table.appendChild(li);
   });
-
   gameScreen.appendChild(table);
 }

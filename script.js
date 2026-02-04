@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const leaderboardDiv = document.getElementById('leaderboard');
   const leaderboardList = document.getElementById('leaderboard-list');
 
-  // Always visible Play button
+  // Play button always visible
   playBtn.textContent = "Play";
   playBtn.disabled = false;
 
-  // Load all JSONs from questions/ folder
+  // Load all JSON questions from questions/ folder
   async function loadQuestions() {
     try {
       const medium = await fetch('questions/medium.json').then(r => r.json());
@@ -44,9 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Start the game
   function startGame() {
-    username = usernameInput.value.trim();
-    if (!username) username = "Player";
-
+    username = usernameInput.value.trim() || "Player";
     let count = leaderboard.filter(l => l.name.startsWith(username)).length;
     username = count ? `${username}#${count+1}` : username;
 
@@ -140,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Background audio loop in music/ folder
   function playBackgroundAudio() {
     if (bgAudio && !bgAudio.paused) return;
     bgAudio = new Audio(`music/music${audioIndex}.mp3`);
@@ -154,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Mini-games
   function runMiniGame(q) {
     answersDiv.innerHTML = '';
     let btn = document.createElement('button');

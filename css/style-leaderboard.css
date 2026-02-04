@@ -1,5 +1,6 @@
 #leaderboard {
   padding-top: 2em;
+  text-align: center;
 }
 
 #leaderboard h2 {
@@ -10,8 +11,9 @@
 #leaderboard-list {
   list-style: none;
   padding: 0;
-  width: 80%;
+  width: 90%;
   max-width: 400px;
+  margin: 0 auto;
 }
 
 #leaderboard-list li {

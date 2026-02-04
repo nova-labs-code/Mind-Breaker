@@ -45,14 +45,16 @@ body, html {
 #title span {
     display: inline-block;
     margin: 0 2px;
-    transform: rotate(calc(-10deg + 20deg * var(--i)));
+    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000; /* subtle outline */
+    transform: rotate(calc(-8deg + 16deg * var(--i))) translateY(calc(-2px + 4px * var(--i)));
     transition: transform 0.3s, color 0.3s;
 }
 
 #title span:hover {
-    transform: rotate(0deg) scale(1.2);
+    transform: rotate(0deg) translateY(0) scale(1.2);
 }
 
+/* ==================== INPUT & BUTTON ==================== */
 #start-screen input {
     font-size: 0.8rem;
     padding: 0.5rem 1rem;

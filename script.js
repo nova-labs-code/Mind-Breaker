@@ -22,7 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const leaderboardDiv = document.getElementById('leaderboard');
   const leaderboardList = document.getElementById('leaderboard-list');
 
-  // Load JSONs from root
+  // Always visible play button
+  playBtn.textContent = "Play";
+  playBtn.disabled = false;
+
+  // Load all JSON questions
   async function loadQuestions() {
     try {
       const medium = await fetch('medium.json').then(r => r.json());
@@ -31,17 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const playable = await fetch('playable.json').then(r => r.json());
       questions = [...medium, ...trick, ...playable, ...hard];
       questions.sort((a,b) => a.num - b.num);
-      playBtn.disabled = false;
-      playBtn.textContent = "Play!";
     } catch (err) {
-      console.error(err);
-      playBtn.textContent = "Failed to load";
+      console.error("Failed to load questions:", err);
+      alert("Could not load questions. Ensure JSON files are in the root.");
     }
   }
 
+  // Start the game
   function startGame() {
     username = usernameInput.value.trim();
-    if (!username) { alert("Enter a username!"); return; }
+    if (!username) username = "Player";
 
     let count = leaderboard.filter(l => l.name.startsWith(username)).length;
     username = count ? `${username}#${count+1}` : username;
@@ -67,8 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 700);
   }
 
-  function updateLives() { livesDiv.textContent = '❤️'.repeat(lives); }
+  // Update lives display
+  function updateLives() {
+    livesDiv.textContent = '❤️'.repeat(lives);
+  }
 
+  // Timer functions
   function startTimer() {
     timerInterval = setInterval(() => {
       const elapsed = ((Date.now() - startTime)/1000).toFixed(2);
@@ -76,23 +83,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
   }
 
-  function stopTimer() { clearInterval(timerInterval); }
+  function stopTimer() {
+    clearInterval(timerInterval);
+  }
 
+  // Show question with pound animation
   function showQuestion() {
     if (current >= questions.length) return endQuiz();
     const q = questions[current];
+
     questionText.style.opacity = 0;
     questionText.style.animation = 'none';
+
     setTimeout(() => {
       questionText.textContent = q.q;
       questionText.style.animation = 'pound 0.5s';
       questionText.style.opacity = 1;
     }, 50);
+
     answersDiv.innerHTML = '';
 
     if (q.type === 'mini') { runMiniGame(q); return; }
 
-    q.options.forEach((opt,i) => {
+    q.options.forEach((opt, i) => {
       const btn = document.createElement('button');
       btn.textContent = opt;
       btn.onclick = () => checkAnswer(i);
@@ -129,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Background audio loop
   function playBackgroundAudio() {
     if (bgAudio && !bgAudio.paused) return;
     bgAudio = new Audio(`music${audioIndex}.mp3`);
@@ -142,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  // Mini-games
   function runMiniGame(q) {
     answersDiv.innerHTML = '';
     let btn = document.createElement('button');

@@ -12,8 +12,9 @@ let index = 0;
 let lives = 3;
 let startTime;
 let timerInterval;
+let username;
 
-/* ================= AUDIO (FIXED) ================= */
+/* ================= AUDIO ================= */
 const tracks = [];
 let currentTrack = 0;
 
@@ -28,10 +29,7 @@ for (let i = 1; i <= 8; i++) {
 }
 
 function playMusic() {
-  tracks.forEach(t => {
-    t.pause();
-    t.currentTime = 0;
-  });
+  tracks.forEach(t => { t.pause(); t.currentTime = 0; });
   tracks[currentTrack].play().catch(()=>{});
 }
 
@@ -39,19 +37,19 @@ function playMusic() {
 async function loadQuestions() {
   const files = ['medium','hard','trick','playable'];
   let all = [];
-
   for (const f of files) {
-    const res = await fetch(`questions/${f}.json`);
-    const data = await res.json();
+    const data = await fetch(`questions/${f}.json`).then(r=>r.json());
     all.push(...data);
   }
-
   return all.sort((a,b)=>a.num-b.num);
 }
 
 /* ================= GAME START ================= */
 playBtn.onclick = async () => {
-  playMusic();               // ✅ audio now starts correctly
+  username = document.getElementById('username').value.trim();
+  if (!username) return alert("Please enter a username!");
+
+  playMusic();
   startScreen.remove();
   gameScreen.style.display = 'block';
 
@@ -66,7 +64,7 @@ playBtn.onclick = async () => {
 function startTimer() {
   timerInterval = setInterval(() => {
     timerEl.textContent =
-      ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+      ((Date.now() - startTime)/1000).toFixed(1)+'s';
   }, 100);
 }
 
@@ -86,7 +84,7 @@ function loseLife() {
 /* ================= VISUAL FEEDBACK ================= */
 function flash(type) {
   document.body.classList.add(type);
-  setTimeout(() => document.body.classList.remove(type), 150);
+  setTimeout(()=>document.body.classList.remove(type),150);
 }
 
 function shake() {
@@ -98,10 +96,9 @@ function shake() {
 /* ================= QUESTIONS ================= */
 function showQuestion() {
   answersDiv.innerHTML = '';
-
   const q = questions[index];
-  questionText.textContent = q.q;
 
+  questionText.textContent = q.q;
   questionText.style.animation = 'none';
   void questionText.offsetWidth;
   questionText.style.animation = 'pound 0.4s';
@@ -115,65 +112,40 @@ function renderNormal(q) {
   q.options.forEach((opt,i)=>{
     const btn = document.createElement('button');
     btn.textContent = opt;
-    btn.onclick = () => {
-      if (i === q.answer) {
-        flash('correct');
-        next();
-      } else {
-        loseLife();
-      }
+    btn.onclick = ()=>{
+      if (i === q.answer) flash('correct'), next();
+      else loseLife();
     };
     answersDiv.appendChild(btn);
   });
 }
 
-/* ================= MINI GAMES (FIXED) ================= */
+/* ================= MINI GAMES ================= */
 function renderMini(q) {
-
-  // HOLD BUTTON
   if (q.mini === 'hold') {
     const btn = document.createElement('button');
     btn.textContent = 'HOLD';
     let timer;
-
-    btn.onmousedown = () => {
-      timer = setTimeout(() => {
-        flash('correct');
-        next();
-      }, q.duration);
-    };
-
-    btn.onmouseup = btn.onmouseleave = () => {
-      clearTimeout(timer);
-    };
-
+    btn.onmousedown = ()=>timer=setTimeout(()=>{flash('correct');next();}, q.duration);
+    btn.onmouseup = btn.onmouseleave = ()=>clearTimeout(timer);
     answersDiv.appendChild(btn);
   }
-
-  // WAIT THEN CLICK
   if (q.mini === 'wait') {
     const btn = document.createElement('button');
     btn.textContent = 'CLICK';
     const start = Date.now();
-
-    btn.onclick = () => {
-      Math.abs(Date.now() - start - q.duration) < 200
+    btn.onclick = ()=>{
+      Math.abs(Date.now()-start-q.duration)<200
         ? (flash('correct'), next())
         : loseLife();
     };
-
     answersDiv.appendChild(btn);
   }
-
-  // REVERSE
   if (q.mini === 'reverse') {
-    ['Correct','Wrong'].forEach(text => {
+    ['Correct','Wrong'].forEach(txt=>{
       const btn = document.createElement('button');
-      btn.textContent = text;
-      btn.onclick = () =>
-        text === 'Wrong'
-          ? (flash('correct'), next())
-          : loseLife();
+      btn.textContent = txt;
+      btn.onclick = ()=> txt==='Wrong'? (flash('correct'), next()) : loseLife();
       answersDiv.appendChild(btn);
     });
   }
@@ -182,5 +154,51 @@ function renderMini(q) {
 /* ================= NEXT ================= */
 function next() {
   index++;
-  showQuestion();
+  if(index >= questions.length) finishQuiz();
+  else showQuestion();
+}
+
+/* ================= FINISH ================= */
+function finishQuiz() {
+  clearInterval(timerInterval);
+  const timeTaken = ((Date.now() - startTime)/1000).toFixed(2);
+
+  saveScore(username,timeTaken);
+  showLeaderboard();
+}
+
+/* ================= LEADERBOARD ================= */
+function saveScore(user, time) {
+  const lb = JSON.parse(localStorage.getItem('leaderboard')||'[]');
+
+  // Check for existing usernames, add #N if duplicate
+  let name = user;
+  let dup = lb.filter(e=>e.username.startsWith(user)).length;
+  if(dup>0) name = user+'#'+(dup+1);
+
+  lb.push({username:name,time:parseFloat(time)});
+  lb.sort((a,b)=>a.time-b.time);
+
+  if(lb.length>1000) lb.length=1000; // limit to 1000
+  localStorage.setItem('leaderboard',JSON.stringify(lb));
+}
+
+function showLeaderboard() {
+  gameScreen.innerHTML = '<h2>LEADERBOARD</h2>';
+  const lb = JSON.parse(localStorage.getItem('leaderboard')||'[]');
+
+  const table = document.createElement('ol');
+  table.style.color='yellow';
+  table.style.fontSize='1rem';
+  table.style.maxHeight='80vh';
+  table.style.overflowY='auto';
+  table.style.padding='0 1rem';
+
+  lb.forEach(entry=>{
+    const li = document.createElement('li');
+    li.textContent = `${entry.username} — ${entry.time}s`;
+    table.appendChild(li);
+  });
+
+  gameScreen.appendChild(table);
 }

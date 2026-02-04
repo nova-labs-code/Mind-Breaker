@@ -37,7 +37,11 @@ playBtn.onclick = async () => {
     if(!username) return alert("Enter username!");
 
     // Play music on user click
-    try { await bgMusic.play(); } catch(e){ console.warn("Music failed to play:",e); }
+    if(bgMusic.readyState >= 3) {
+        bgMusic.play().catch(e => console.warn("Music failed to play:", e));
+    } else {
+        bgMusic.addEventListener('canplaythrough', () => bgMusic.play());
+    }
 
     startScreen.style.transition='opacity 0.5s';
     startScreen.style.opacity=0;
@@ -48,7 +52,7 @@ playBtn.onclick = async () => {
     questions = await loadQuestions();
     if(!questions.length) return alert("No questions loaded!");
 
-    startTime=Date.now();
+    startTime = Date.now();
     startTimer();
     updateLives();
     showQuestion();
@@ -61,7 +65,6 @@ function startTimer(){
 
 // ==================== LIVES ====================
 function updateLives(){ livesEl.textContent='❤ '.repeat(lives); }
-
 function loseLife(){ flash('wrong'); shake(); lives--; updateLives(); if(lives<=0) location.reload(); }
 
 // ==================== FEEDBACK ====================

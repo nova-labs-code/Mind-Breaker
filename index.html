@@ -3,44 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mind Breaker</title>
-
-<!-- Custom font -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
-<!-- Single CSS -->
+<title>Mind Breaker Quiz</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- START SCREEN -->
-<div id="start-screen" class="center-screen">
-  <h1 id="title-text">Mind Breaker</h1>
-  <input id="username" type="text" placeholder="Enter your username">
-  <button id="play-btn" disabled>Loading...</button>
+<!-- Start Screen -->
+<div id="start-screen">
+  <div id="title-text">Mind Breaker</div>
+  <input type="text" id="username" placeholder="Enter username">
+  <button id="play-btn">Play</button>
 </div>
 
-<!-- GAME SCREEN -->
-<div id="game-screen" hidden>
-  <div id="info-bar">
-    <span id="lives"></span>
-    <span id="timer"></span>
-  </div>
+<!-- Loading -->
+<div id="loading" style="display:none; font-family:'Press Start 2P', sans-serif; font-size:2em; color:white; text-align:center; margin-top:20px;">
+  Loading...
+</div>
 
+<!-- Game Screen -->
+<div id="game-screen">
+  <div id="lives"></div>
+  <div id="timer"></div>
   <div id="question-container">
-    <p id="question-text"></p>
+    <div id="question-text"></div>
     <div id="answers"></div>
   </div>
 </div>
 
-<!-- LEADERBOARD -->
-<div id="leaderboard" hidden>
+<!-- Leaderboard -->
+<div id="leaderboard">
   <h2>Leaderboard</h2>
   <ul id="leaderboard-list"></ul>
 </div>
 
-<script src="script.js"></script>
+<script src="main.js"></script>
 </body>
 </html>

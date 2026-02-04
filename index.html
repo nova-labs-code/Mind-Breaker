@@ -11,18 +11,18 @@
 <!-- ==================== START SCREEN ==================== -->
 <div id="start-screen">
     <div id="title">
-        <span style="color:#ff0000">M</span>
-        <span style="color:#ff7f00">i</span>
-        <span style="color:#ffff00">n</span>
-        <span style="color:#00ff00">d</span>
-        <span style="color:#0000ff"> </span>
-        <span style="color:#4b0082">B</span>
-        <span style="color:#8f00ff">r</span>
-        <span style="color:#ff1493">e</span>
-        <span style="color:#00ffff">a</span>
-        <span style="color:#ff4500">k</span>
-        <span style="color:#32cd32">e</span>
-        <span style="color:#ffd700">r</span>
+        <span style="--i:0;color:#ff0000">M</span>
+        <span style="--i:1;color:#ff7f00">i</span>
+        <span style="--i:2;color:#ffff00">n</span>
+        <span style="--i:3;color:#00ff00">d</span>
+        <span style="--i:4;color:#0000ff"> </span>
+        <span style="--i:5;color:#4b0082">B</span>
+        <span style="--i:6;color:#8f00ff">r</span>
+        <span style="--i:7;color:#ff1493">e</span>
+        <span style="--i:8;color:#00ffff">a</span>
+        <span style="--i:9;color:#ff4500">k</span>
+        <span style="--i:10;color:#32cd32">e</span>
+        <span style="--i:11;color:#ffd700">r</span>
     </div>
     <input type="text" id="username" placeholder="Enter username">
     <button id="play-btn">Play</button>
@@ -30,6 +30,7 @@
 
 <!-- ==================== GAME SCREEN ==================== -->
 <div id="game-screen">
+    <audio id="bg-music" src="music/background.mp3" loop></audio>
     <div id="lives"></div>
     <div id="timer">0.0s</div>
     <div id="question-container">

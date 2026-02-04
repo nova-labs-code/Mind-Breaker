@@ -1,5 +1,6 @@
 /* ===== CUSTOM FONT ===== */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 body {
   margin: 0;
   padding: 0;
@@ -26,6 +27,7 @@ body {
   font-family: 'Press Start 2P', monospace;
   font-size: 1rem;
   padding: 0.5rem 1rem;
+  cursor: pointer;
 }
 
 /* ===== GAME SCREEN ===== */
@@ -53,9 +55,20 @@ body {
   color: yellow;
   text-align: center;
   margin-bottom: 1rem;
+  animation: pound 0.4s;
 }
 
 /* ===== BUTTONS ===== */
+#answers {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  min-height: 150px;
+}
+
 #answers button {
   font-family: 'Press Start 2P', monospace;
   font-size: 1.2rem;
@@ -64,7 +77,8 @@ body {
   color: black;
   border: 2px solid white;
   cursor: pointer;
-  transition: all 0.2s ease;
+  animation: poundBtn 0.6s infinite alternate;
+  transition: transform 0.2s;
 }
 
 #answers button:hover {
@@ -86,6 +100,12 @@ body {
   25% { transform: scale(1.2); }
   50% { transform: scale(1); }
   75% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes poundBtn {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
 

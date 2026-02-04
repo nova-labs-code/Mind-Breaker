@@ -3,7 +3,7 @@ const usernameInput = document.getElementById('username');
 const startScreen = document.getElementById('start-screen');
 const gameScreen = document.getElementById('game-screen');
 const questionContainer = document.getElementById('question-container');
-const questionNumberEl = document.getElementById('question-number');
+const questionNumberCorner = document.getElementById('question-number-corner');
 const questionText = document.getElementById('question-text');
 const answersDiv = document.getElementById('answers');
 const timerEl = document.getElementById('timer');
@@ -16,6 +16,7 @@ let startTime;
 let timerInterval;
 let username;
 
+// Sequential music files
 const musicFiles = [
     'music/music1.mp3',
     'music/music2.mp3',
@@ -26,7 +27,10 @@ const musicFiles = [
     'music/music7.mp3',
     'music/music8.mp3'
 ];
-let bgMusicElements = [];
+let musicIndex = 0;
+let bgMusic = new Audio();
+bgMusic.loop = false;
+bgMusic.volume = 0.3;
 
 // ==================== LOAD QUESTIONS ====================
 async function loadQuestions() {
@@ -47,22 +51,14 @@ playBtn.onclick = async () => {
     username = usernameInput.value.trim();
     if(!username) return alert("Enter username!");
 
-    // Create and play all music files
-    bgMusicElements = musicFiles.map(src => {
-        const audio = new Audio(src);
-        audio.loop = true;
-        audio.preload = "auto";
-        audio.volume = 0.3;
-        audio.play().catch(e => console.warn("Music failed to play:", e));
-        return audio;
-    });
-
+    // Fade start screen
     startScreen.style.transition='opacity 0.5s';
     startScreen.style.opacity=0;
     setTimeout(()=>startScreen.remove(),500);
 
     gameScreen.style.display='flex';
 
+    // Load questions
     questions = await loadQuestions();
     if(!questions.length) return alert("No questions loaded!");
 
@@ -70,6 +66,17 @@ playBtn.onclick = async () => {
     startTimer();
     updateLives();
     showQuestion();
+
+    // Play first music track
+    musicIndex = 0;
+    bgMusic.src = musicFiles[musicIndex];
+    bgMusic.play().catch(e=>console.warn("Music failed to play:", e));
+
+    bgMusic.onended = () => {
+        musicIndex = (musicIndex + 1) % musicFiles.length;
+        bgMusic.src = musicFiles[musicIndex];
+        bgMusic.play().catch(e=>console.warn("Music failed to play:", e));
+    };
 };
 
 // ==================== TIMER ====================
@@ -92,7 +99,7 @@ function showQuestion(){
     answersDiv.innerHTML='';
     const q = questions[currentIndex];
 
-    questionNumberEl.textContent=`Question ${currentIndex+1} / ${questions.length}`;
+    questionNumberCorner.textContent=`${currentIndex+1} / ${questions.length}`;
     questionText.textContent=q.q;
     questionText.style.animation='none'; void questionText.offsetWidth;
     questionText.style.animation='pound 0.4s';

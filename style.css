@@ -1,147 +1,182 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
+/* --- General --- */
 body {
-  font-family: 'Press Start 2P', monospace;
-  background-color: #1a1a1a;
-  color: #f0f0f0;
   margin: 0;
   padding: 0;
+  font-family: 'Press Start 2P', sans-serif;
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  color: white;
   overflow: hidden; /* disable scrolling */
 }
 
-/* CENTER SCREEN (START) */
-.center-screen {
+h1, h2, h3 {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+/* --- Start Screen --- */
+#start-screen {
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  text-align: center;
+  align-items: center;
+  background: linear-gradient(180deg, #ff4a4a, #ffbd4a);
 }
 
 #title-text {
-  font-size: 2em;
-  margin-bottom: 1em;
-  color: #ff3d00;
-  text-shadow: 2px 2px #000;
-  transition: opacity 0.5s ease;
+  font-size: 3em;
+  color: #fff;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 5px #000;
 }
 
 #username {
-  padding: 0.5em 1em;
-  font-size: 1em;
-  margin-bottom: 1em;
-  border-radius: 5px;
-  border: 2px solid #ff3d00;
-  background-color: #222;
-  color: #fff;
-  text-align: center;
-  font-family: 'Press Start 2P', monospace;
-  transition: opacity 0.5s ease;
-}
-
-button {
-  cursor: pointer;
-  border: none;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 1.2em;
+  padding: 10px;
   border-radius: 8px;
-  padding: 0.7em 1.5em;
-  margin: 0.3em;
-  font-size: 1.1em;
-  transition: all 0.1s ease;
-  font-family: 'Press Start 2P', monospace;
-  background: linear-gradient(45deg, #ff3d00, #ff9800);
-  color: #fff;
-  box-shadow: 2px 2px 6px #000;
-}
-
-button:hover {
-  transform: scale(1.05);
-  background: linear-gradient(45deg, #ff6e40, #ffb74d);
-}
-
-button:active {
-  transform: scale(0.95);
-  box-shadow: inset 2px 2px 6px #000;
-}
-
-/* GAME SCREEN */
-#game-screen {
-  padding: 1em;
-}
-
-#info-bar {
-  display: flex;
-  justify-content: space-between;
-  width: 90%;
-  max-width: 600px;
-  margin: 0 auto 1em auto;
-  font-size: 1em;
-}
-
-#question-container {
-  max-width: 600px;
-  width: 90%;
-  margin: auto;
+  border: 2px solid #fff;
+  margin-bottom: 15px;
   text-align: center;
 }
 
+#play-btn {
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 1.5em;
+  padding: 15px 30px;
+  border-radius: 12px;
+  border: 2px solid #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, #4affaa, #4a90ff);
+  color: white;
+  transition: transform 0.2s, background 0.3s;
+}
+
+#play-btn:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #ff4a4a, #ffbd4a);
+}
+
+/* --- Game Screen --- */
+#game-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+}
+
+/* Lives & Timer */
+#lives {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 1.5em;
+}
+
+#timer {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5em;
+}
+
+/* --- Question Text --- */
 #question-text {
-  font-size: 1.4em;
-  font-weight: bold;
-  margin-bottom: 1em;
-  min-height: 3em;
-  opacity: 0;
-  animation-fill-mode: forwards;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 2em;
+  color: #fffa;
+  text-align: center;
+  animation: pound 0.5s;
+  text-shadow: 2px 2px 5px #000;
 }
 
 /* Pound animation */
 @keyframes pound {
-  0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
-  50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
-  70% { transform: scale(0.9) rotate(-5deg); }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  30%  { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  50%  { transform: translate(-50%, -50%) scale(0.9); }
+  70%  { transform: translate(-50%, -50%) scale(1.05); }
+  100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-/* ANSWER BUTTONS */
+/* --- Answers --- */
+#answers {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
 #answers button {
-  display: block;
-  width: 80%;
-  max-width: 350px;
-  margin: 0.5em auto;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 1.2em;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ff4a4a, #ffbd4a);
+  color: white;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
 }
 
-/* MINI-GAME BUTTONS */
-button.hold-btn, button.wait-btn, button.reverse-btn {
-  background: linear-gradient(45deg, #00bfa5, #1de9b6);
-  width: 140px;
-  height: 50px;
-  margin: 0.5em;
+#answers button:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #4affaa, #4a90ff);
 }
 
-/* LEADERBOARD */
+/* --- Mini Games Buttons --- */
+.hold-btn {
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 1.2em;
+  padding: 15px 30px;
+  border-radius: 12px;
+  border: 2px solid #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, #f3a683, #f7d794);
+  color: #222;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.hold-btn:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #778beb, #e77f67);
+}
+
+/* --- Leaderboard --- */
 #leaderboard {
-  padding-top: 2em;
-  text-align: center;
-}
-
-#leaderboard h2 {
-  font-size: 2em;
-  margin-bottom: 1em;
-  color: #ffeb3b;
-  text-shadow: 2px 2px #000;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 50px;
+  font-size: 1.2em;
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
 }
 
 #leaderboard-list {
   list-style: none;
   padding: 0;
-  max-width: 400px;
-  margin: auto;
+  margin: 20px 0;
+  width: 50%;
+  text-align: center;
 }
 
 #leaderboard-list li {
-  background: #333;
-  margin: 0.3em 0;
-  padding: 0.5em 1em;
-  border-radius: 5px;
-  box-shadow: 2px 2px 5px #000;
+  padding: 8px 0;
+  border-bottom: 1px solid #fff;
 }

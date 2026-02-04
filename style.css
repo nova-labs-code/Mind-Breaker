@@ -1,132 +1,129 @@
-* {
-  box-sizing: border-box;
-  font-family: 'Press Start 2P', monospace;
-  user-select: none;
-}
-
+/* ===== CUSTOM FONT ===== */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 body {
   margin: 0;
+  padding: 0;
+  font-family: 'Press Start 2P', monospace;
   background: black;
-  color: white;
+  color: yellow;
   overflow: hidden;
-}
-
-/* ---------- FLASH STATES ---------- */
-body.correct {
-  background: #0f0;
-  transition: background 0.15s;
-}
-
-body.wrong {
-  background: #f00;
-  transition: background 0.15s;
-}
-
-/* ---------- START SCREEN ---------- */
-#start-screen {
-  position: fixed;
-  inset: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 2rem;
+  justify-content: center;
 }
 
-#title {
-  color: yellow;
-  font-size: clamp(32px, 6vw, 72px);
-  text-align: center;
-  transform: translateX(1px);
-}
-
-#username {
-  padding: 1rem;
-  font-size: 1rem;
-  text-align: center;
-}
-
-#play-btn {
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  cursor: pointer;
-  background: black;
-  color: yellow;
-  border: 2px solid yellow;
-}
-
-/* ---------- GAME ---------- */
-#game-screen {
-  display: none;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-}
-
-#lives {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  color: yellow;
-}
-
-#timer {
-  position: absolute;
-  right: 1.5rem;
-  bottom: 1.5rem;
-  font-size: clamp(14px, 2vw, 28px);
-}
-
-/* ---------- QUESTION ---------- */
-#question-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 900px;
-  text-align: center;
-}
-
-#question-text {
-  color: yellow;
-  font-size: clamp(22px, 5vw, 56px);
-  margin-bottom: 2rem;
-  animation: pound 0.4s;
-}
-
-#answers {
+/* ===== START SCREEN ===== */
+#start-screen {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 1rem;
 }
 
-#answers button {
-  padding: 1rem 1.5rem;
-  font-size: clamp(12px, 2vw, 24px);
-  background: black;
-  color: white;
-  border: 2px solid yellow;
-  cursor: pointer;
-  animation: pound 0.4s;
+#start-screen input, #start-screen button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
 }
 
-/* ---------- ANIMATIONS ---------- */
+/* ===== GAME SCREEN ===== */
+#game-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  height: 100vh;
+  text-align: center;
+}
+
+#question-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#question-text {
+  font-size: 1.5rem;
+  color: yellow;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* ===== BUTTONS ===== */
+#answers button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.2rem;
+  padding: 1rem 2rem;
+  background: yellow;
+  color: black;
+  border: 2px solid white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#answers button:hover {
+  transform: scale(1.1);
+}
+
+/* ===== TIMER AND LIVES ===== */
+#timer, #lives {
+  position: fixed;
+  bottom: 50px;
+  right: 30px;
+  font-size: 1rem;
+  color: white;
+}
+
+/* ===== ANIMATIONS ===== */
 @keyframes pound {
-  0% { transform: scale(0.4); opacity: 0; }
-  60% { transform: scale(1.2); opacity: 1; }
+  0% { transform: scale(1); }
+  25% { transform: scale(1.2); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
 
-@keyframes shake {
-  0% { transform: translate(-50%, -50%) translateX(0); }
-  25% { transform: translate(-50%, -50%) translateX(-10px); }
-  50% { transform: translate(-50%, -50%) translateX(10px); }
-  75% { transform: translate(-50%, -50%) translateX(-10px); }
-  100% { transform: translate(-50%, -50%) translateX(0); }
+.correct {
+  animation: flashGreen 0.2s;
+}
+
+.wrong {
+  animation: flashRed 0.2s;
+}
+
+@keyframes flashGreen {
+  0% { background: black; }
+  50% { background: green; }
+  100% { background: black; }
+}
+
+@keyframes flashRed {
+  0% { background: black; }
+  50% { background: red; }
+  100% { background: black; }
 }
 
 .shake {
-  animation: shake 0.3s;
+  animation: shakeAnim 0.3s;
+}
+
+@keyframes shakeAnim {
+  0% { transform: translateX(0px); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0px); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  #question-text { font-size: 1rem; }
+  #answers button { font-size: 0.9rem; padding: 0.7rem 1.2rem; }
+  #timer, #lives { font-size: 0.8rem; bottom: 30px; right: 20px; }
 }

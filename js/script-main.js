@@ -1,90 +1,107 @@
-let lives = 3;
-let questionIndex = 0;
 let questions = [];
-let startTime = Date.now(); // invisible timer
+let index = 0;
+let lives = 3;
+let startTime;
+let timerInterval;
+let musicStarted = false;
+let bgAudio;
+let username;
 
-const questionBox = document.getElementById('question');
-const optionsBox = document.getElementById('options');
-const livesBox = document.getElementById('lives');
-const scoreBox = document.getElementById('score');
+// choose ONE track or rotate once at start
+const bgMusic = "music/music1.mp3";
 
-function updateLives(){ livesBox.innerText = "❤️".repeat(lives); }
+document.getElementById("start-btn").onclick = async () => {
+  username = document.getElementById("username").value.trim();
+  if (!username) return;
 
-async function loadQuestions(){
-  const medium = await fetch('questions/medium.json').then(r=>r.json());
-  const trick = await fetch('questions/trick.json').then(r=>r.json());
-  const playable = await fetch('questions/playable.json').then(r=>r.json());
-  const hard = await fetch('questions/hard.json').then(r=>r.json());
+  document.getElementById("start-screen").hidden = true;
+  document.getElementById("game-screen").hidden = false;
 
-  questions = [...medium, ...trick, ...playable, ...hard];
-  questions.sort((a,b)=>a.num - b.num);
-
+  await loadQuestions();
+  startTimer();
   showQuestion();
+};
+
+async function loadQuestions() {
+  const trick = await fetch("questions/trick.json").then(r => r.json());
+  questions = trick.sort((a, b) => a.num - b.num);
 }
 
-function getElapsedTime(){ return Math.floor((Date.now()-startTime)/1000); }
+function showQuestion() {
+  if (index >= questions.length) return finishGame();
 
-function showQuestion(){
-  if(lives <= 0){
-    questionBox.innerText = "💀 Game Over!";
-    optionsBox.innerHTML="";
-    document.getElementById('mini-game').style.display="none";
-    return;
-  }
+  const q = questions[index];
+  const text = document.getElementById("question-text");
+  const options = document.getElementById("options");
+  const playBtn = document.getElementById("play-audio");
 
-  if(questionIndex>=questions.length){
-    questionBox.innerText = "🎉 You finished all questions!";
-    optionsBox.innerHTML="";
-    document.getElementById('mini-game').style.display="none";
-    return;
-  }
+  text.hidden = true;
+  options.innerHTML = "";
 
-  const q = questions[questionIndex];
-  scoreBox.innerText = `Question ${questionIndex+1} / 120`;
-  updateLives();
+  playBtn.onclick = () => {
+    startMusicOnce();
 
-  if(q.type === "mini"){
-    runMiniGame(q, nextQuestion, loseLife);
-  } else {
-    document.getElementById('mini-game').style.display = "none";
-    questionBox.innerText = q.q;
-    optionsBox.innerHTML = "";
+    text.textContent = q.q;
+    text.hidden = false;
 
-    q.options.forEach((opt,i)=>{
-      const btn = document.createElement('button');
-      btn.innerText = opt;
-      btn.onclick = ()=>{
-        if(i===q.answer){
-          if(questionIndex === questions.length-1){
-            // stop timer
-            nextQuestion();
-          } else {
-            nextQuestion();
-          }
-        } else {
-          loseLife(btn);
-        }
-      }
-      optionsBox.appendChild(btn);
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => handleAnswer(i === q.answer);
+      options.appendChild(btn);
     });
+  };
+}
+
+function startMusicOnce() {
+  if (musicStarted) return;
+
+  bgAudio = new Audio(bgMusic);
+  bgAudio.loop = true;
+  bgAudio.volume = 0.6;
+  bgAudio.play();
+
+  musicStarted = true;
+}
+
+function handleAnswer(correct) {
+  if (!correct) {
+    lives--;
+    updateLives();
+    if (lives <= 0) resetGame();
+  } else {
+    index++;
+    showQuestion();
   }
 }
 
-function loseLife(btn){
-  lives--;
-  updateLives();
-  if(btn) btn.classList.add("fail");
-  setTimeout(()=>{
-    if(btn) btn.classList.remove("fail");
-    showQuestion();
-  },500);
+function updateLives() {
+  document.getElementById("lives").textContent = "❤️".repeat(lives);
 }
 
-function nextQuestion(){
-  questionIndex++;
+function resetGame() {
+  index = 0;
+  lives = 3;
+  updateLives();
+  startTime = Date.now();
   showQuestion();
 }
 
-// initialize
-updateLives();
-loadQuestions();
+function startTimer() {
+  startTime = Date.now();
+  timerInterval = setInterval(() => {
+    const t = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById("timer").textContent =
+      `${String(Math.floor(t / 60)).padStart(2,"0")}:${String(t % 60).padStart(2,"0")}`;
+  }, 1000);
+}
+
+function finishGame() {
+  clearInterval(timerInterval);
+  const time = Math.floor((Date.now() - startTime) / 1000);
+  saveWinner(username, time);
+
+  document.getElementById("game-screen").hidden = true;
+  document.getElementById("leaderboard").hidden = false;
+  renderLeaderboard();
+}

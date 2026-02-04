@@ -2,36 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Mind Breaker</title>
-
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>The Mind Breaker Quiz</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div id="start-screen">
-  <h1 id="title">MIND BREAKER</h1>
-  <input id="username" placeholder="USERNAME" maxlength="12">
-  <button id="play-btn">PLAY</button>
-</div>
-
-<div id="game-screen">
-  <div id="lives"></div>
-  <div id="timer"></div>
-
-  <div id="question-container">
-    <div id="question-text"></div>
-    <div id="answers"></div>
+  <!-- START SCREEN -->
+  <div id="start-screen">
+    <h1 style="color:yellow;">THE MIND BREAKER</h1>
+    <input type="text" id="username" placeholder="Enter username" />
+    <button id="play-btn">PLAY</button>
   </div>
-</div>
 
-<script src="script.js"></script>
+  <!-- GAME SCREEN -->
+  <div id="game-screen">
+    <div id="question-container">
+      <div id="question-text"></div>
+      <div id="answers"></div>
+    </div>
+    <div id="timer"></div>
+    <div id="lives"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>

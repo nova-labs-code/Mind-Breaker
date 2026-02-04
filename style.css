@@ -11,9 +11,10 @@ body, html { width:100%; height:100%; overflow:hidden; display:flex; justify-con
 #title span {
     display:inline-block;
     margin:0 2px;
-    color:yellow;
+    color: yellow;
     text-shadow:1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
-    transform: rotate(calc(-15deg + 30deg * var(--i))) translateY(calc(-2px + 4px * var(--i)));
+    /* Rotate letters slightly, max ±12deg */
+    transform: rotate(calc(-12deg + 24deg * var(--i)/11)) translateY(calc(-2px + 4px * var(--i)/11));
     transition: transform 0.3s, color 0.3s;
 }
 #title span:hover { transform: rotate(0deg) translateY(0) scale(1.2); }

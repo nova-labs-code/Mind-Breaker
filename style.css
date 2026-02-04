@@ -51,6 +51,9 @@ body {
 
 #play-btn:hover { transform: scale(1.1); }
 
+/* Loading */
+#loading { font-size: clamp(16px,2vw,32px); text-align:center; margin-top:20px; }
+
 /* Game Screen */
 #game-screen {
   width: 100vw;
@@ -59,7 +62,7 @@ body {
   display: none;
 }
 
-/* Timer in bottom-right, slightly above bottom */
+/* Timer bottom-right */
 #timer {
   position: absolute;
   bottom: 2rem;
@@ -88,13 +91,21 @@ body {
   margin-bottom: 3vh;
 }
 
-/* Pound Animation */
+/* Pound Animations */
 @keyframes pound {
   0% { transform: translateY(-50%) scale(0.5); opacity: 0; }
   30% { transform: translateY(-50%) scale(1.2); opacity: 1; }
   50% { transform: translateY(-50%) scale(0.9); }
   70% { transform: translateY(-50%) scale(1.05); }
   100% { transform: translateY(-50%) scale(1); }
+}
+
+@keyframes button-pound {
+  0% { transform: scale(0.5); opacity: 0; }
+  30% { transform: scale(1.2); opacity: 1; }
+  50% { transform: scale(0.9); }
+  70% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 /* Answer Buttons */
@@ -118,6 +129,7 @@ body {
 }
 
 #answers button:hover, .hold-btn:hover { transform: scale(1.1); }
+.pound-btn { animation: button-pound 0.5s; }
 
 /* Leaderboard */
 #leaderboard {

@@ -1,16 +1,19 @@
 button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  margin: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
   background: #333;
   color: #eee;
-  border: 2px solid #555;
-  border-radius: 6px;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 button:hover {
   background: #555;
 }
 
-button.fail {
-  background: #900;
-  color: #fff;
+button:active {
+  transform: scale(0.95);
 }

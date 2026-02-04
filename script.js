@@ -1,4 +1,3 @@
-// script.js (same as previous consolidated JS)
 document.addEventListener('DOMContentLoaded', () => {
   let questions = [];
   let current = 0;
@@ -17,10 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const livesDiv = document.getElementById('lives');
   const timerDiv = document.getElementById('timer');
   const startScreen = document.getElementById('start-screen');
+  const titleText = document.getElementById('title-text');
+  const usernameInput = document.getElementById('username');
   const gameScreen = document.getElementById('game-screen');
   const leaderboardDiv = document.getElementById('leaderboard');
   const leaderboardList = document.getElementById('leaderboard-list');
 
+  // Load JSONs from root
   async function loadQuestions() {
     try {
       const medium = await fetch('medium.json').then(r => r.json());
@@ -32,28 +34,37 @@ document.addEventListener('DOMContentLoaded', () => {
       playBtn.disabled = false;
       playBtn.textContent = "Play!";
     } catch (err) {
-      console.error("Error loading questions:", err);
+      console.error(err);
       playBtn.textContent = "Failed to load";
     }
   }
 
   function startGame() {
-    username = document.getElementById('username').value.trim();
+    username = usernameInput.value.trim();
     if (!username) { alert("Enter a username!"); return; }
 
     let count = leaderboard.filter(l => l.name.startsWith(username)).length;
     username = count ? `${username}#${count+1}` : username;
 
-    startScreen.hidden = true;
-    gameScreen.hidden = false;
+    // Fade out start screen
+    titleText.style.transition = "opacity 0.7s";
+    usernameInput.style.transition = "opacity 0.7s";
+    playBtn.style.transition = "opacity 0.7s";
+    titleText.style.opacity = 0;
+    usernameInput.style.opacity = 0;
+    playBtn.style.opacity = 0;
 
-    lives = 3;
-    current = 0;
-    startTime = Date.now();
-    updateLives();
-    startTimer();
-    playBackgroundAudio();
-    showQuestion();
+    setTimeout(() => {
+      startScreen.hidden = true;
+      gameScreen.hidden = false;
+      lives = 3;
+      current = 0;
+      startTime = Date.now();
+      updateLives();
+      startTimer();
+      playBackgroundAudio();
+      showQuestion();
+    }, 700);
   }
 
   function updateLives() { livesDiv.textContent = '❤️'.repeat(lives); }
@@ -71,8 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (current >= questions.length) return endQuiz();
     const q = questions[current];
     questionText.style.opacity = 0;
-    setTimeout(() => { questionText.textContent = q.q; questionText.style.opacity = 1; }, 50);
+    questionText.style.animation = 'none';
+    setTimeout(() => {
+      questionText.textContent = q.q;
+      questionText.style.animation = 'pound 0.5s';
+      questionText.style.opacity = 1;
+    }, 50);
     answersDiv.innerHTML = '';
+
     if (q.type === 'mini') { runMiniGame(q); return; }
 
     q.options.forEach((opt,i) => {
@@ -114,11 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function playBackgroundAudio() {
     if (bgAudio && !bgAudio.paused) return;
-
     bgAudio = new Audio(`music${audioIndex}.mp3`);
     bgAudio.volume = 0.5;
     bgAudio.play().catch(e => console.log('Audio blocked:', e));
-
     bgAudio.onended = () => {
       audioIndex++;
       if (audioIndex > totalTracks) audioIndex = 1;
@@ -164,5 +179,4 @@ document.addEventListener('DOMContentLoaded', () => {
   playBtn.addEventListener('click', startGame);
   loadQuestions();
   updateLives();
-
 });

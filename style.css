@@ -77,7 +77,6 @@ body {
   color: black;
   border: 2px solid white;
   cursor: pointer;
-  animation: poundBtn 0.6s infinite alternate;
   transition: transform 0.2s;
 }
 
@@ -100,12 +99,6 @@ body {
   25% { transform: scale(1.2); }
   50% { transform: scale(1); }
   75% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-@keyframes poundBtn {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
 

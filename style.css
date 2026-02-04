@@ -5,10 +5,11 @@
 
 body {
   font-family: 'Press Start 2P', monospace;
-  background-color: #121212;
+  background-color: #1a1a1a;
   color: #f0f0f0;
   margin: 0;
   padding: 0;
+  overflow: hidden; /* disable scrolling */
 }
 
 /* ======================
@@ -26,7 +27,8 @@ body {
 #start-screen h1 {
   font-size: 2em;
   margin-bottom: 1em;
-  color: #ffeb3b;
+  color: #ff3d00;
+  text-shadow: 2px 2px #000;
 }
 
 #username {
@@ -34,10 +36,11 @@ body {
   font-size: 1em;
   margin-bottom: 1em;
   border-radius: 5px;
-  border: 1px solid #888;
+  border: 2px solid #ff3d00;
   background-color: #222;
   color: #fff;
   text-align: center;
+  font-family: 'Press Start 2P', monospace;
 }
 
 /* ======================
@@ -46,21 +49,25 @@ body {
 button {
   cursor: pointer;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   padding: 0.7em 1.5em;
   margin: 0.3em;
   font-size: 1.1em;
   transition: all 0.1s ease;
-  background-color: #1e88e5;
+  font-family: 'Press Start 2P', monospace;
+  background: linear-gradient(45deg, #ff3d00, #ff9800);
   color: #fff;
+  box-shadow: 2px 2px 6px #000;
 }
 
-button:hover { 
-  background-color: #1565c0; 
-  transform: scale(1.05); 
+button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #ff6e40, #ffb74d);
 }
-button:active { 
-  transform: scale(0.95); 
+
+button:active {
+  transform: scale(0.95);
+  box-shadow: inset 2px 2px 6px #000;
 }
 
 /* ======================
@@ -108,9 +115,8 @@ button:active {
    MINI-GAME BUTTONS
 ====================== */
 button.hold-btn, button.wait-btn, button.reverse-btn {
-  background-color: #ff9800;
-  color: #fff;
-  width: 120px;
+  background: linear-gradient(45deg, #00bfa5, #1de9b6);
+  width: 140px;
   height: 50px;
   margin: 0.5em;
 }
@@ -126,6 +132,8 @@ button.hold-btn, button.wait-btn, button.reverse-btn {
 #leaderboard h2 {
   font-size: 2em;
   margin-bottom: 1em;
+  color: #ffeb3b;
+  text-shadow: 2px 2px #000;
 }
 
 #leaderboard-list {
@@ -140,4 +148,5 @@ button.hold-btn, button.wait-btn, button.reverse-btn {
   margin: 0.3em 0;
   padding: 0.5em 1em;
   border-radius: 5px;
+  box-shadow: 2px 2px 5px #000;
 }

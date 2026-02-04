@@ -1,4 +1,8 @@
-/* Main style */
+/* ======================
+   GLOBAL + FONT
+====================== */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 body {
   font-family: 'Press Start 2P', monospace;
   background-color: #121212;
@@ -7,6 +11,9 @@ body {
   padding: 0;
 }
 
+/* ======================
+   CENTER SCREEN (START)
+====================== */
 .center-screen {
   display: flex;
   flex-direction: column;
@@ -33,6 +40,9 @@ body {
   text-align: center;
 }
 
+/* ======================
+   BUTTONS
+====================== */
 button {
   cursor: pointer;
   border: none;
@@ -45,10 +55,30 @@ button {
   color: #fff;
 }
 
-button:hover { background-color: #1565c0; transform: scale(1.05); }
-button:active { transform: scale(0.95); }
+button:hover { 
+  background-color: #1565c0; 
+  transform: scale(1.05); 
+}
+button:active { 
+  transform: scale(0.95); 
+}
 
-/* Question container */
+/* ======================
+   GAME SCREEN
+====================== */
+#game-screen {
+  padding: 1em;
+}
+
+#info-bar {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto 1em auto;
+  font-size: 1em;
+}
+
 #question-container {
   max-width: 600px;
   width: 90%;
@@ -64,18 +94,50 @@ button:active { transform: scale(0.95); }
   transition: opacity 0.3s ease;
 }
 
-/* Info bar (lives + timer) */
-#info-bar {
-  display: flex;
-  justify-content: space-between;
-  width: 90%;
-  max-width: 600px;
-  margin-bottom: 1em;
-  font-size: 1em;
+/* ======================
+   ANSWER BUTTONS
+====================== */
+#answers button {
+  display: block;
+  width: 80%;
+  max-width: 350px;
+  margin: 0.5em auto;
 }
 
-/* Leaderboard */
-#leaderboard { padding-top: 2em; text-align: center; }
-#leaderboard h2 { font-size: 2em; margin-bottom: 1em; }
-#leaderboard-list { list-style: none; padding: 0; max-width: 400px; margin: auto; }
-#leaderboard-list li { background: #333; margin: 0.3em 0; padding: 0.5em 1em; border-radius: 5px; }
+/* ======================
+   MINI-GAME BUTTONS
+====================== */
+button.hold-btn, button.wait-btn, button.reverse-btn {
+  background-color: #ff9800;
+  color: #fff;
+  width: 120px;
+  height: 50px;
+  margin: 0.5em;
+}
+
+/* ======================
+   LEADERBOARD
+====================== */
+#leaderboard {
+  padding-top: 2em;
+  text-align: center;
+}
+
+#leaderboard h2 {
+  font-size: 2em;
+  margin-bottom: 1em;
+}
+
+#leaderboard-list {
+  list-style: none;
+  padding: 0;
+  max-width: 400px;
+  margin: auto;
+}
+
+#leaderboard-list li {
+  background: #333;
+  margin: 0.3em 0;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+}

@@ -13,7 +13,6 @@ body, html { width:100%; height:100%; overflow:hidden; display:flex; justify-con
     margin:0 2px;
     color: yellow;
     text-shadow:1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
-    /* Rotate letters slightly, max ±12deg */
     transform: rotate(calc(-12deg + 24deg * var(--i)/11)) translateY(calc(-2px + 4px * var(--i)/11));
     transition: transform 0.3s, color 0.3s;
 }
@@ -27,9 +26,11 @@ body, html { width:100%; height:100%; overflow:hidden; display:flex; justify-con
 /* GAME SCREEN */
 #game-screen { display:none; flex-direction:column; justify-content:center; align-items:center; width:100%; height:100%; position:relative; text-align:center; }
 
+/* QUESTION NUMBER IN CORNER */
+#question-number-corner { position:absolute; top:1rem; right:1rem; font-size:1rem; color:white; }
+
 /* QUESTION CONTAINER */
 #question-container { display:flex; flex-direction:column; align-items:center; justify-content:center; max-width:90%; padding:1rem; }
-#question-number { font-size:0.8rem; color:white; margin-bottom:0.5rem; }
 #question-text { font-size:1.8rem; color:yellow; margin-bottom:1rem; text-align:center; animation:pound 0.4s; }
 
 /* ANSWERS */
@@ -65,7 +66,7 @@ body.wrong { background-color:#f00; transition: background 0.15s; }
 
 /* RESPONSIVE */
 @media (max-width:768px){
-    #question-number{font-size:0.6rem;}
+    #question-number-corner{font-size:0.8rem;}
     #question-text{font-size:1.4rem;}
     #answers button{font-size:0.7rem; min-width:90px; padding:0.5rem 0.8rem;}
     #timer{font-size:1rem;}

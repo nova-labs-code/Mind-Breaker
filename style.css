@@ -1,7 +1,5 @@
-/* ==================== CUSTOM FONT ==================== */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-/* ==================== GLOBAL ==================== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -12,11 +10,11 @@
 body, html {
     width: 100%;
     height: 100%;
-    overflow: hidden; /* disable scrolling */
+    overflow: hidden;
+    background: linear-gradient(135deg, #000 0%, #111 100%);
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #000;
     color: #fff;
 }
 
@@ -35,15 +33,24 @@ body, html {
 
 /* ==================== TITLE ==================== */
 #title {
-    font-size: 2rem;
-    text-align: center;
+    font-size: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
     margin-bottom: 2rem;
+    text-align: center;
 }
 
-/* Optional hover effect on letters */
+#title span {
+    display: inline-block;
+    margin: 0 2px;
+    transform: rotate(calc(-10deg + 20deg * var(--i)));
+    transition: transform 0.3s, color 0.3s;
+}
+
 #title span:hover {
-    transform: translateY(-5px);
-    transition: transform 0.2s ease;
+    transform: rotate(0deg) scale(1.2);
 }
 
 #start-screen input {
@@ -150,15 +157,8 @@ body, html {
 }
 
 /* ==================== FEEDBACK ==================== */
-body.correct {
-    background-color: #0f0;
-    transition: background 0.15s;
-}
-
-body.wrong {
-    background-color: #f00;
-    transition: background 0.15s;
-}
+body.correct { background-color: #0f0; transition: background 0.15s; }
+body.wrong { background-color: #f00; transition: background 0.15s; }
 
 /* ==================== QUESTION POUND ==================== */
 @keyframes pound {
@@ -176,9 +176,7 @@ body.wrong {
     100% { transform: translateX(0); }
 }
 
-.shake {
-    animation: shake 0.3s;
-}
+.shake { animation: shake 0.3s; }
 
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
@@ -187,5 +185,5 @@ body.wrong {
     #answers button { font-size: 0.7rem; min-width: 90px; padding: 0.5rem 0.8rem; }
     #timer { font-size: 1rem; }
     #lives { font-size: 1.2rem; }
-    #title { font-size: 1.2rem; }
+    #title { font-size: 2rem; }
 }

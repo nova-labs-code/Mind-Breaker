@@ -1,12 +1,12 @@
-#mini-game {
-  margin: 20px 0;
+#answers button {
+  display: inline-block;
+  min-width: 80px;
+  min-height: 50px;
+  margin: 5px;
+  font-size: 1rem;
+  position: relative;
 }
 
-#mini-button {
-  padding: 20px 40px;
-  font-size: 1.2em;
-  background: #227;
-  color: #fff;
-  border-radius: 10px;
-  cursor: pointer;
+#answers button.moving {
+  position: absolute;
 }

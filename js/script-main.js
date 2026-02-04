@@ -11,8 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const totalTracks = 8;
 
   const startBtn = document.getElementById('start-btn');
-  const audioBtn = document.getElementById('play-audio-btn');
-  const creditsBtn = document.getElementById('credits-btn');
   const questionText = document.getElementById('question-text');
   const answersDiv = document.getElementById('answers');
   const livesDiv = document.getElementById('lives');
@@ -22,22 +20,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const leaderboardDiv = document.getElementById('leaderboard');
   const leaderboardList = document.getElementById('leaderboard-list');
 
-  // Load all question JSONs
+  // Load questions
   async function loadQuestions() {
     const medium = await fetch('questions/medium.json').then(r => r.json());
     const hard = await fetch('questions/hard.json').then(r => r.json());
     const trick = await fetch('questions/trick.json').then(r => r.json());
     const playable = await fetch('questions/playable.json').then(r => r.json());
-
     questions = [...medium, ...trick, ...playable, ...hard];
-    questions.sort((a, b) => a.num - b.num); // fixed order
+    questions.sort((a, b) => a.num - b.num);
   }
 
+  // Start quiz
   function startQuiz() {
     username = document.getElementById('username').value.trim();
     if (!username) { alert('Enter a username'); return; }
 
-    // Make unique username
+    // Unique username
     let count = leaderboard.filter(l => l.name.startsWith(username)).length;
     username = count ? `${username}#${count+1}` : username;
 
@@ -48,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLives();
     startTimer();
     showQuestion();
-    playBackgroundAudio();
+    playBackgroundAudio(); // auto start
   }
 
   function updateLives() {
@@ -62,19 +60,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
   }
 
-  function stopTimer() {
-    clearInterval(timerInterval);
-  }
+  function stopTimer() { clearInterval(timerInterval); }
 
   function showQuestion() {
     if (current >= questions.length) return endQuiz();
-
     const q = questions[current];
+
     questionText.hidden = false;
+    questionText.textContent = q.q || "No question";
+
     answersDiv.innerHTML = '';
 
     if (q.type === 'playable') {
-      runMiniGame(q); // from script-mini.js
+      runMiniGame(q);
       return;
     }
 
@@ -95,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
       lives--;
       updateLives();
       if (lives <= 0) {
-        alert('Game Over! Try again.');
+        alert('Game Over!');
         location.reload();
       }
     }
@@ -117,27 +115,23 @@ document.addEventListener('DOMContentLoaded', () => {
     leaderboardDiv.hidden = false;
   }
 
+  // Background audio auto-loop
   function playBackgroundAudio() {
-    if (bgAudio && !bgAudio.paused) return; // already playing
-
+    if (bgAudio && !bgAudio.paused) return;
     bgAudio = new Audio(`music/music${audioIndex}.mp3`);
     bgAudio.volume = 0.5;
-    bgAudio.play().catch(e => console.log('Audio play blocked:', e));
+    bgAudio.play().catch(e => console.log('Audio blocked:', e));
 
     bgAudio.onended = () => {
       audioIndex++;
       if (audioIndex > totalTracks) audioIndex = 1;
       bgAudio.src = `music/music${audioIndex}.mp3`;
-      bgAudio.play().catch(e => console.log('Audio play blocked:', e));
+      bgAudio.play().catch(e => console.log('Audio blocked:', e));
     };
   }
 
-  // Button events
   startBtn.onclick = startQuiz;
-  audioBtn.onclick = playBackgroundAudio;
-  creditsBtn.onclick = () => alert('EWS - Founder');
 
-  // Initial setup
   loadQuestions();
   updateLives();
 });

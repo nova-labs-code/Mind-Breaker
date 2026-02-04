@@ -54,10 +54,19 @@ async function loadQuestions(){
     }
 }
 
+// ==================== PRE-FILL USERNAME ====================
+const savedName = localStorage.getItem('username');
+if(savedName){
+    usernameInput.value = savedName;
+}
+
 // ==================== START QUIZ ====================
 playBtn.onclick = async () => {
-    username = usernameInput.value.trim();
+    username = usernameInput.value.trim() || localStorage.getItem('username');
     if(!username) return alert("Enter username!");
+
+    // Save permanently
+    localStorage.setItem('username', username);
 
     startScreen.style.transition = 'opacity 0.5s';
     startScreen.style.opacity = 0;
@@ -72,6 +81,11 @@ playBtn.onclick = async () => {
     updateLives();
     showQuestion();
 
+    // Always add Change Username button
+    if(!document.getElementById('change-username-btn')){
+        addChangeUsernameButton();
+    }
+
     musicIndex = 0;
     bgMusic.src = musicFiles[musicIndex];
     bgMusic.play().catch(e => console.warn("Music failed to play:", e));
@@ -85,8 +99,8 @@ playBtn.onclick = async () => {
 
 // ==================== TIMER ====================
 function startTimer(){
-    timerInterval = setInterval(() => {
-        timerEl.textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+    timerInterval = setInterval(()=>{
+        timerEl.textContent = ((Date.now() - startTime)/1000).toFixed(1) + 's';
     }, 100);
 }
 
@@ -97,7 +111,7 @@ function loseLife(){ flash('wrong'); shake(); lives--; updateLives(); if(lives <
 // ==================== FEEDBACK ====================
 function flash(type){
     document.body.classList.add(type);
-    setTimeout(() => document.body.classList.remove(type), 150);
+    setTimeout(()=>document.body.classList.remove(type),150);
 }
 function shake(){
     questionContainer.classList.remove('shake');
@@ -117,11 +131,11 @@ function showQuestion(){
     questionText.style.animation = 'none'; void questionText.offsetWidth;
     questionText.style.animation = 'pound 0.4s';
 
-    // Shuffle options while keeping the first JSON option as correct
+    // Shuffle options; first JSON option is always correct
     const shuffledOptions = shuffle([...q.options]);
-    const correctIndex = shuffledOptions.indexOf(q.options[0]); // first option in JSON is correct
+    const correctIndex = shuffledOptions.indexOf(q.options[0]);
 
-    shuffledOptions.forEach((opt, i) => {
+    shuffledOptions.forEach((opt, i)=>{
         const btn = document.createElement('button');
         btn.textContent = opt;
         btn.onclick = () => {
@@ -173,4 +187,24 @@ function showLeaderboard(){
         ol.appendChild(li);
     });
     gameScreen.appendChild(ol);
+}
+
+// ==================== CHANGE USERNAME BUTTON ====================
+function addChangeUsernameButton(){
+    const existing = document.getElementById('change-username-btn');
+    if(existing) existing.remove();
+
+    const btn = document.createElement('button');
+    btn.id = 'change-username-btn';
+    btn.textContent = 'Change Username';
+    btn.style.marginLeft = '1rem';
+    btn.onclick = () => {
+        const newName = prompt("Enter new username:", username || '');
+        if(newName && newName.trim()){
+            username = newName.trim();
+            localStorage.setItem('username', username);
+            alert("Username updated to: " + username);
+        }
+    };
+    questionNumberCorner.appendChild(btn);
 }

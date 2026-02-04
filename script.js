@@ -50,7 +50,10 @@ playBtn.onclick = async () => {
 
   playMusic();
   startScreen.remove();
-  gameScreen.style.display = 'block';
+  gameScreen.style.display = 'flex';
+  gameScreen.style.flexDirection = 'column';
+  gameScreen.style.alignItems = 'center';
+  gameScreen.style.justifyContent = 'center';
 
   questions = await loadQuestions();
   startTime = Date.now();
@@ -62,8 +65,7 @@ playBtn.onclick = async () => {
 /* ================= TIMER ================= */
 function startTimer() {
   timerInterval = setInterval(() => {
-    timerEl.textContent =
-      ((Date.now() - startTime)/1000).toFixed(1)+'s';
+    timerEl.textContent = ((Date.now() - startTime)/1000).toFixed(1)+'s';
   }, 100);
 }
 
@@ -120,6 +122,10 @@ function renderNormal(q) {
     const btn = document.createElement('button');
     btn.textContent = opt;
     btn.style.padding='1rem 2rem';
+    btn.style.fontFamily='custom-font, sans-serif';
+    btn.style.fontSize='1.2rem';
+    btn.style.background='yellow';
+    btn.style.color='black';
     btn.onclick = ()=>{
       if (i === q.answer) flash('correct'), next();
       else loseLife();
@@ -132,73 +138,59 @@ function renderNormal(q) {
 function renderMini(q) {
   answersDiv.innerHTML = '';
   answersDiv.style.position='relative';
-  answersDiv.style.minHeight='150px';
+  answersDiv.style.minHeight='200px';
   answersDiv.style.display='flex';
   answersDiv.style.flexWrap='wrap';
   answersDiv.style.justifyContent='center';
   answersDiv.style.alignItems='center';
   answersDiv.style.gap='10px';
 
-  // HOLD
-  if (q.mini === 'hold') {
+  const makeBtn = (text, clickHandler) => {
     const btn = document.createElement('button');
-    btn.textContent = 'HOLD';
+    btn.textContent = text;
     btn.style.padding='1rem 2rem';
-    let timer;
-    btn.onmousedown = () => timer=setTimeout(()=>{flash('correct');next();},q.duration);
-    btn.onmouseup=btn.onmouseleave=()=>clearTimeout(timer);
+    btn.style.fontFamily='custom-font, sans-serif';
+    btn.style.fontSize='1.2rem';
+    btn.style.background='yellow';
+    btn.style.color='black';
+    btn.onclick = clickHandler;
     answersDiv.appendChild(btn);
+    return btn;
   }
 
-  // WAIT
-  if (q.mini==='wait') {
-    const btn=document.createElement('button');
-    btn.textContent='CLICK';
-    btn.style.padding='1rem 2rem';
+  if(q.mini==='hold'){
+    let timer;
+    const btn = makeBtn('HOLD',()=>{});
+    btn.onmousedown=()=>timer=setTimeout(()=>{flash('correct');next();},q.duration);
+    btn.onmouseup=btn.onmouseleave=()=>clearTimeout(timer);
+  }
+
+  if(q.mini==='wait'){
+    const btn = makeBtn('CLICK',()=>{});
     const start=Date.now();
     btn.onclick=()=>Math.abs(Date.now()-start-q.duration)<200? (flash('correct'),next()) : loseLife();
-    answersDiv.appendChild(btn);
   }
 
-  // REVERSE
-  if (q.mini==='reverse') {
-    ['Correct','Wrong'].forEach(txt=>{
-      const btn=document.createElement('button');
-      btn.textContent=txt;
-      btn.style.padding='1rem 2rem';
-      btn.onclick=()=> txt==='Wrong'? (flash('correct'),next()) : loseLife();
-      answersDiv.appendChild(btn);
-    });
+  if(q.mini==='reverse'){
+    makeBtn('Correct',()=>loseLife());
+    makeBtn('Wrong',()=>{flash('correct');next();});
   }
 
-  // REVERSE-WAIT
   if(q.mini==='reverse-wait'){
-    const btn=document.createElement('button');
-    btn.textContent='CLICK';
-    btn.style.padding='1rem 2rem';
+    const btn = makeBtn('CLICK',()=>{});
     const start=Date.now();
-    btn.onclick=()=>Math.abs(Date.now()-start-q.duration)<200? (flash('correct'),next()):loseLife();
-    answersDiv.appendChild(btn);
+    btn.onclick=()=>Math.abs(Date.now()-start-q.duration)<200? (flash('correct'),next()) : loseLife();
   }
 
-  // AVOID
   if(q.mini==='avoid'){
     for(let i=1;i<=q.buttons;i++){
-      const btn=document.createElement('button');
-      btn.textContent='Button '+i;
-      btn.style.padding='1rem 2rem';
-      btn.onclick=()=> i===q.safe? (flash('correct'),next()) : loseLife();
-      answersDiv.appendChild(btn);
+      makeBtn('Button '+i,()=> i===q.safe? (flash('correct'),next()) : loseLife());
     }
   }
 
-  // HOLD-MOVE
   if(q.mini==='hold-move'){
-    const btn=document.createElement('button');
-    btn.textContent='HOLD';
+    const btn = makeBtn('HOLD',()=>{});
     btn.style.position='absolute';
-    btn.style.padding='1rem 2rem';
-    answersDiv.appendChild(btn);
     const move=()=>{btn.style.left=Math.random()*(answersDiv.clientWidth-100)+'px'; btn.style.top=Math.random()*(answersDiv.clientHeight-50)+'px';};
     const interval=setInterval(move,100);
     let timer;
@@ -206,17 +198,12 @@ function renderMini(q) {
     btn.onmouseup=btn.onmouseleave=()=>clearTimeout(timer);
   }
 
-  // AVOID-MOVE
   if(q.mini==='avoid-move'){
     for(let i=1;i<=q.buttons;i++){
-      const btn=document.createElement('button');
-      btn.textContent='Button '+i;
+      const btn = makeBtn('Button '+i,()=> i===q.safe? (flash('correct'),next()) : loseLife());
       btn.style.position='absolute';
-      btn.style.padding='1rem 2rem';
-      answersDiv.appendChild(btn);
       const move=()=>{btn.style.left=Math.random()*(answersDiv.clientWidth-100)+'px'; btn.style.top=Math.random()*(answersDiv.clientHeight-50)+'px';};
       setInterval(move,150);
-      btn.onclick=()=> i===q.safe? (flash('correct'),next()) : loseLife();
     }
   }
 }
@@ -224,7 +211,7 @@ function renderMini(q) {
 /* ================= NEXT ================= */
 function next() {
   index++;
-  if(index >= questions.length) finishQuiz();
+  if(index>=questions.length) finishQuiz();
   else showQuestion();
 }
 

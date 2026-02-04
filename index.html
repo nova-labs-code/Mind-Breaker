@@ -11,17 +11,20 @@
 </head>
 <body>
 
-<div id="start-screen">
+<div id="start-screen" class="center-screen">
+  <h1>Mind Breaker</h1>
   <input id="username" type="text" placeholder="Enter your username">
-  <button id="start-btn">Start Quiz</button>
+  <button id="start-btn" disabled>Loading Questions...</button>
 </div>
 
 <div id="game-screen" hidden>
-  <p id="question-text"></p>
-  <div id="answers"></div>
   <div id="info-bar">
     <span id="lives"></span>
     <span id="timer"></span>
+  </div>
+  <div id="question-container">
+    <p id="question-text"></p>
+    <div id="answers"></div>
   </div>
 </div>
 

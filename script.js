@@ -141,7 +141,7 @@ function renderNormal(q) {
 function renderMini(q) {
   answersDiv.innerHTML = '';
   answersDiv.style.position='relative';
-  answersDiv.style.minHeight='200px';
+  answersDiv.style.minHeight='250px';
   answersDiv.style.display='flex';
   answersDiv.style.flexWrap='wrap';
   answersDiv.style.justifyContent='center';
@@ -163,36 +163,42 @@ function renderMini(q) {
     return btn;
   }
   
+  // Hold mini
   if (q.mini==='hold'){
     const btn = makeBtn('HOLD', ()=>{});
     let timer;
     btn.onmousedown = () => timer = setTimeout(()=>{flash('correct'); next();}, q.duration);
     btn.onmouseup = btn.onmouseleave = ()=>clearTimeout(timer);
   }
-  
+
+  // Wait mini
   if (q.mini==='wait'){
     const btn = makeBtn('CLICK', ()=>{});
     const start = Date.now();
     btn.onclick = ()=>Math.abs(Date.now()-start-q.duration)<200 ? (flash('correct'), next()) : loseLife();
   }
-  
+
+  // Reverse mini
   if (q.mini==='reverse'){
     makeBtn('Correct', ()=>loseLife());
     makeBtn('Wrong', ()=>{flash('correct'); next();});
   }
-  
+
+  // Reverse-wait mini
   if (q.mini==='reverse-wait'){
     const btn = makeBtn('CLICK', ()=>{});
     const start = Date.now();
     btn.onclick = ()=>Math.abs(Date.now()-start-q.duration)<200 ? (flash('correct'), next()) : loseLife();
   }
-  
+
+  // Avoid mini
   if (q.mini==='avoid'){
     for(let i=1;i<=q.buttons;i++){
       makeBtn('Button '+i, ()=> i===q.safe ? (flash('correct'), next()) : loseLife());
     }
   }
-  
+
+  // Hold-move mini
   if (q.mini==='hold-move'){
     const btn = makeBtn('HOLD', ()=>{});
     btn.style.position='absolute';
@@ -203,7 +209,8 @@ function renderMini(q) {
     btn.onmouseup = btn.onmouseleave = ()=>clearTimeout(timer);
     move();
   }
-  
+
+  // Avoid-move mini
   if (q.mini==='avoid-move'){
     for(let i=1;i<=q.buttons;i++){
       const btn = makeBtn('Button '+i, ()=> i===q.safe ? (flash('correct'), next()) : loseLife());

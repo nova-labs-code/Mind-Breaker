@@ -1,88 +1,89 @@
-// --- Elements ---
 const playBtn = document.getElementById('play-btn');
 const startScreen = document.getElementById('start-screen');
 const usernameInput = document.getElementById('username');
 const gameScreen = document.getElementById('game-screen');
-const questionContainer = document.getElementById('question-container');
 const questionText = document.getElementById('question-text');
 const answersDiv = document.getElementById('answers');
 const leaderboard = document.getElementById('leaderboard');
 const leaderboardList = document.getElementById('leaderboard-list');
+const loadingDiv = document.getElementById('loading');
+const timerDiv = document.getElementById('timer');
 
-// --- Game Variables ---
 let questions = [];
 let currentIndex = 0;
 let startTime;
+let timerInterval;
 let music = new Audio('music/music1.mp3');
 music.loop = true;
 
-// --- Fetch Questions ---
+// Fetch all four JSONs
 async function loadQuestions() {
-  const resNormal = await fetch('questions/medium.json');
-  const normalQs = await resNormal.json();
-
-  const resMini = await fetch('questions/playable.json');
-  const miniQs = await resMini.json();
-
-  // Mix normally but fixed order
-  questions = [...normalQs, ...miniQs].sort((a,b) => a.num - b.num);
+  try {
+    loadingDiv.style.display = 'block';
+    const paths = ['questions/medium.json','questions/hard.json','questions/trick.json','questions/playable.json'];
+    const allQuestions = [];
+    for(const path of paths){
+      const res = await fetch(path);
+      if(!res.ok) throw new Error(`${path} not found`);
+      const qs = await res.json();
+      allQuestions.push(...qs);
+    }
+    questions = allQuestions.sort((a,b)=>a.num - b.num);
+    loadingDiv.style.display = 'none';
+  } catch(err){
+    console.error(err);
+    questionText.innerText = 'Failed to load questions. Check console.';
+  }
 }
 
-// --- Start Quiz ---
+// Start Quiz
 playBtn.addEventListener('click', async () => {
   const username = usernameInput.value.trim();
-  if (!username) return alert('Enter a username');
+  if(!username) return alert('Enter username');
 
-  // Remove start screen completely
   startScreen.remove();
-
-  // Show game screen
   gameScreen.style.display = 'block';
-
-  // Load questions
   await loadQuestions();
 
-  // Start music
   music.play();
-
-  // Start timer
   startTime = Date.now();
-
-  // Show first question
+  timerInterval = setInterval(updateTimer, 100);
   showQuestion(username);
 });
 
-// --- Show Question ---
-function showQuestion(username) {
-  if (currentIndex >= questions.length) return endQuiz(username);
+function updateTimer(){
+  const elapsed = ((Date.now() - startTime)/1000).toFixed(2);
+  timerDiv.innerText = `Time: ${elapsed}s`;
+}
+
+// Show Question
+function showQuestion(username){
+  if(currentIndex >= questions.length) return endQuiz(username);
 
   const q = questions[currentIndex];
   questionText.innerText = q.q;
-
-  // Clear previous answers
   answersDiv.innerHTML = '';
 
-  if (q.type === 'normal') {
-    q.options.forEach((opt, i) => {
+  if(q.type==='normal'){
+    q.options.forEach((opt,i)=>{
       const btn = document.createElement('button');
       btn.innerText = opt;
-      btn.addEventListener('click', () => checkAnswer(i, username));
+      btn.addEventListener('click', ()=>checkAnswer(i,username));
       answersDiv.appendChild(btn);
     });
-  } else if (q.type === 'mini') {
-    createMiniGame(q, username);
+  } else if(q.type==='mini'){
+    createMiniGame(q,username);
   }
 
-  // Trigger pound animation
   questionText.style.animation = 'none';
   void questionText.offsetWidth;
   questionText.style.animation = 'pound 0.5s';
 }
 
-// --- Check Normal Answer ---
-function checkAnswer(selected, username) {
+// Check Normal Answer
+function checkAnswer(selected, username){
   const q = questions[currentIndex];
-  if (selected !== q.answer) {
+  if(selected !== q.answer){
     alert('Wrong! Reloading...');
     location.reload();
     return;
@@ -91,68 +92,73 @@ function checkAnswer(selected, username) {
   showQuestion(username);
 }
 
-// --- Mini-games ---
-function createMiniGame(q, username) {
-  const btn = document.createElement('button');
-  btn.className = 'hold-btn';
-  btn.innerText = 'Start Mini';
-  answersDiv.appendChild(btn);
+// Mini-games
+function createMiniGame(q, username){
+  answersDiv.innerHTML = '';
+  if(q.mini==='hold'){
+    const btn = document.createElement('button');
+    btn.className='hold-btn';
+    btn.innerText='Hold me';
+    answersDiv.appendChild(btn);
 
-  if (q.mini === 'hold') {
-    btn.addEventListener('mousedown', () => {
+    btn.addEventListener('mousedown', ()=>{
       const start = Date.now();
-      const endTime = q.duration;
-      const mouseUp = () => {
-        const held = Date.now() - start;
-        if (held >= endTime) {
+      const mouseUp = ()=>{
+        const held = Date.now()-start;
+        if(held >= q.duration){
           currentIndex++;
           showQuestion(username);
-        } else {
-          alert('Failed! Reloading...');
-          location.reload();
-        }
+        } else { location.reload(); }
         btn.removeEventListener('mouseup', mouseUp);
       };
       btn.addEventListener('mouseup', mouseUp);
     });
-  } else if (q.mini === 'wait') {
-    btn.addEventListener('click', () => {
-      setTimeout(() => {
+
+  } else if(q.mini==='wait'){
+    const btn = document.createElement('button');
+    btn.className='hold-btn';
+    btn.innerText='Click at the right time';
+    answersDiv.appendChild(btn);
+
+    btn.addEventListener('click', ()=>{
+      setTimeout(()=>{
         currentIndex++;
         showQuestion(username);
       }, q.duration);
     });
-  } else if (q.mini === 'avoid') {
-    btn.innerText = 'Click the safe button';
-    for (let i = 0; i < q.buttons; i++) {
+
+  } else if(q.mini==='avoid'){
+    for(let i=0;i<q.buttons;i++){
       const b = document.createElement('button');
-      b.innerText = `Button ${i+1}`;
-      b.addEventListener('click', () => {
-        if (i === q.safe) {
+      b.innerText=`Button ${i+1}`;
+      b.addEventListener('click',()=>{
+        if(i===q.safe){
           currentIndex++;
           showQuestion(username);
-        } else {
-          alert('Wrong! Reloading...');
-          location.reload();
-        }
+        } else { location.reload(); }
       });
       answersDiv.appendChild(b);
     }
-    btn.remove();
-  } else if (q.mini === 'reverse') {
-    btn.innerText = "Click 'Wrong' instead";
-    btn.addEventListener('click', () => {
+
+  } else if(q.mini==='reverse'){
+    const btn = document.createElement('button');
+    btn.className='hold-btn';
+    btn.innerText="Click 'Wrong'";
+    answersDiv.appendChild(btn);
+
+    btn.addEventListener('click', ()=>{
       currentIndex++;
       showQuestion(username);
     });
   }
 }
 
-// --- End Quiz / Leaderboard ---
-function endQuiz(username) {
-  const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-  gameScreen.style.display = 'none';
-  leaderboard.style.display = 'flex';
+// End Quiz / Leaderboard
+function endQuiz(username){
+  clearInterval(timerInterval);
+  const elapsed = ((Date.now()-startTime)/1000).toFixed(2);
+  gameScreen.style.display='none';
+  leaderboard.style.display='flex';
 
   const li = document.createElement('li');
   li.innerText = `${username} - ${elapsed}s`;

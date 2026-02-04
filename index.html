@@ -2,21 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mind Breaker</title>
 
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div id="start-screen">
-  <h1 id="title">Mind Breaker</h1>
-  <input id="username" placeholder="Username" autocomplete="off">
-  <button id="play-btn">Play</button>
+  <h1 id="title">MIND BREAKER</h1>
+  <input id="username" placeholder="USERNAME" maxlength="12">
+  <button id="play-btn">PLAY</button>
 </div>
 
-<div id="game-screen" hidden>
+<div id="game-screen">
   <div id="lives"></div>
   <div id="timer"></div>
 

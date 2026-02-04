@@ -32,18 +32,24 @@ let bgMusic = new Audio();
 bgMusic.loop = false;
 bgMusic.volume = 0.3;
 
-// ==================== LOAD QUESTIONS ====================
-async function loadQuestions() {
-    const files = ['medium','hard','trick','mind-tricks'];
-    let all = [];
-    for(const f of files){
-        try{
-            const data = await fetch(`questions/${f}.json`).then(r=>r.json());
-            if(Array.isArray(data)) all.push(...data);
-        } catch(e){ console.warn(`Failed to load ${f}.json`, e); }
+// ==================== SHUFFLE UTILITY ====================
+function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
     }
-    all.sort((a,b)=>a.num - b.num);
-    return all;
+    return arr;
+}
+
+// ==================== LOAD QUESTIONS ====================
+async function loadQuestions(){
+    try{
+        const data = await fetch('questions.json').then(r=>r.json());
+        if(!Array.isArray(data)) return [];
+        // sort by num ascending
+        data.sort((a,b)=>a.num-b.num);
+        return data;
+    }catch(e){ console.warn("Failed to load questions.json", e); return []; }
 }
 
 // ==================== START QUIZ ====================
@@ -51,14 +57,11 @@ playBtn.onclick = async () => {
     username = usernameInput.value.trim();
     if(!username) return alert("Enter username!");
 
-    // Fade start screen
     startScreen.style.transition='opacity 0.5s';
     startScreen.style.opacity=0;
     setTimeout(()=>startScreen.remove(),500);
-
     gameScreen.style.display='flex';
 
-    // Load questions
     questions = await loadQuestions();
     if(!questions.length) return alert("No questions loaded!");
 
@@ -67,7 +70,6 @@ playBtn.onclick = async () => {
     updateLives();
     showQuestion();
 
-    // Play first music track
     musicIndex = 0;
     bgMusic.src = musicFiles[musicIndex];
     bgMusic.play().catch(e=>console.warn("Music failed to play:", e));
@@ -81,7 +83,9 @@ playBtn.onclick = async () => {
 
 // ==================== TIMER ====================
 function startTimer(){
-    timerInterval = setInterval(()=>{ timerEl.textContent=((Date.now()-startTime)/1000).toFixed(1)+'s'; },100);
+    timerInterval = setInterval(()=>{ 
+        timerEl.textContent = ((Date.now()-startTime)/1000).toFixed(1)+'s'; 
+    },100);
 }
 
 // ==================== LIVES ====================
@@ -89,8 +93,15 @@ function updateLives(){ livesEl.textContent='❤ '.repeat(lives); }
 function loseLife(){ flash('wrong'); shake(); lives--; updateLives(); if(lives<=0) location.reload(); }
 
 // ==================== FEEDBACK ====================
-function flash(type){ document.body.classList.add(type); setTimeout(()=>document.body.classList.remove(type),150); }
-function shake(){ questionContainer.classList.remove('shake'); void questionContainer.offsetWidth; questionContainer.classList.add('shake'); }
+function flash(type){ 
+    document.body.classList.add(type); 
+    setTimeout(()=>document.body.classList.remove(type),150); 
+}
+function shake(){ 
+    questionContainer.classList.remove('shake'); 
+    void questionContainer.offsetWidth; 
+    questionContainer.classList.add('shake'); 
+}
 
 // ==================== QUESTIONS ====================
 function showQuestion(){
@@ -104,10 +115,17 @@ function showQuestion(){
     questionText.style.animation='none'; void questionText.offsetWidth;
     questionText.style.animation='pound 0.4s';
 
-    q.options.forEach((opt,i)=>{
-        const btn=document.createElement('button');
-        btn.textContent=opt;
-        btn.onclick=()=>{ if(i===q.answer){ flash('correct'); nextQuestion(); } else { loseLife(); } };
+    // Copy options and shuffle
+    const options = shuffle([...q.options]);
+    const correctIndex = options.indexOf(q.options[q.answer]);
+
+    options.forEach((opt,i)=>{
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => {
+            if(i===correctIndex){ flash('correct'); nextQuestion(); } 
+            else { loseLife(); }
+        };
         answersDiv.appendChild(btn);
     });
 }
@@ -138,8 +156,10 @@ function showLeaderboard(){
     gameScreen.innerHTML='<h2>LEADERBOARD</h2>';
     const lb=JSON.parse(localStorage.getItem('leaderboard')||'[]');
     const ol=document.createElement('ol');
-    ol.style.color='yellow'; ol.style.fontSize='1rem';
-    ol.style.maxHeight='80vh'; ol.style.overflowY='auto';
+    ol.style.color='yellow'; 
+    ol.style.fontSize='1rem';
+    ol.style.maxHeight='80vh'; 
+    ol.style.overflowY='auto';
     ol.style.padding='0 1rem';
     lb.forEach(entry=>{
         const li=document.createElement('li');

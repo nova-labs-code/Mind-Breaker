@@ -65,9 +65,11 @@ h1, h2, h3 {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  justify-content: center; /* vertical centering */
+  align-items: center;     /* horizontal centering */
   position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
 }
 
 /* Lives & Timer */
@@ -87,33 +89,26 @@ h1, h2, h3 {
 
 /* --- Question Text --- */
 #question-text {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   font-family: 'Press Start 2P', sans-serif;
-  font-size: 2em;
+  font-size: 2.5em;
   color: #fffa;
   text-align: center;
   animation: pound 0.5s;
   text-shadow: 2px 2px 5px #000;
+  margin-bottom: 30px; /* space between question and answers */
 }
 
 /* Pound animation */
 @keyframes pound {
-  0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-  30%  { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-  50%  { transform: translate(-50%, -50%) scale(0.9); }
-  70%  { transform: translate(-50%, -50%) scale(1.05); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+  0%   { transform: scale(0.5); opacity: 0; }
+  30%  { transform: scale(1.2); opacity: 1; }
+  50%  { transform: scale(0.9); }
+  70%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 /* --- Answers --- */
 #answers {
-  position: absolute;
-  top: 55%;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;

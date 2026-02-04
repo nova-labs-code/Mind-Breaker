@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mind Breaker</title>
+
+  <!-- CSS -->
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/mini.css">
+  <link rel="stylesheet" href="css/leaderboard.css">
 </head>
 <body>
 
-<!-- START -->
+<!-- START SCREEN -->
 <div id="start-screen">
   <h1>Mind Breaker</h1>
   <input id="username" placeholder="Username" maxlength="16">
@@ -17,7 +21,7 @@
   <p id="credits" hidden>ews – founder</p>
 </div>
 
-<!-- GAME -->
+<!-- GAME SCREEN -->
 <div id="game-screen" hidden>
   <div id="top-bar">
     <span id="lives">❤️❤️❤️</span>
@@ -38,8 +42,10 @@
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<!-- JS (ORDER MATTERS) -->
-<script src="js/winners.js"></script>
+<!-- JS -->
+<script src="js/script-utils.js"></script>
+<script src="js/script-mini.js"></script>
+<script src="js/script-winners.js"></script>
 <script src="js/script-main.js"></script>
 
 <script>

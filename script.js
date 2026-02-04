@@ -46,10 +46,12 @@ async function loadQuestions(){
     try{
         const data = await fetch('questions.json').then(r=>r.json());
         if(!Array.isArray(data)) return [];
-        // sort by num ascending
         data.sort((a,b)=>a.num-b.num);
         return data;
-    }catch(e){ console.warn("Failed to load questions.json", e); return []; }
+    }catch(e){
+        console.warn("Failed to load questions.json", e);
+        return [];
+    }
 }
 
 // ==================== START QUIZ ====================
@@ -83,8 +85,8 @@ playBtn.onclick = async () => {
 
 // ==================== TIMER ====================
 function startTimer(){
-    timerInterval = setInterval(()=>{ 
-        timerEl.textContent = ((Date.now()-startTime)/1000).toFixed(1)+'s'; 
+    timerInterval = setInterval(()=>{
+        timerEl.textContent = ((Date.now()-startTime)/1000).toFixed(1)+'s';
     },100);
 }
 
@@ -93,19 +95,19 @@ function updateLives(){ livesEl.textContent='❤ '.repeat(lives); }
 function loseLife(){ flash('wrong'); shake(); lives--; updateLives(); if(lives<=0) location.reload(); }
 
 // ==================== FEEDBACK ====================
-function flash(type){ 
-    document.body.classList.add(type); 
-    setTimeout(()=>document.body.classList.remove(type),150); 
+function flash(type){
+    document.body.classList.add(type);
+    setTimeout(()=>document.body.classList.remove(type),150);
 }
-function shake(){ 
-    questionContainer.classList.remove('shake'); 
-    void questionContainer.offsetWidth; 
-    questionContainer.classList.add('shake'); 
+function shake(){
+    questionContainer.classList.remove('shake');
+    void questionContainer.offsetWidth;
+    questionContainer.classList.add('shake');
 }
 
 // ==================== QUESTIONS ====================
 function showQuestion(){
-    if(currentIndex>=questions.length){ finishQuiz(); return; }
+    if(currentIndex >= questions.length){ finishQuiz(); return; }
 
     answersDiv.innerHTML='';
     const q = questions[currentIndex];
@@ -115,16 +117,20 @@ function showQuestion(){
     questionText.style.animation='none'; void questionText.offsetWidth;
     questionText.style.animation='pound 0.4s';
 
-    // Copy options and shuffle
-    const options = shuffle([...q.options]);
-    const correctIndex = options.indexOf(q.options[q.answer]);
+    // Shuffle options but track correct answer
+    const shuffledOptions = shuffle([...q.options]);
+    const correctIndex = shuffledOptions.indexOf(q.options[q.answer]);
 
-    options.forEach((opt,i)=>{
+    shuffledOptions.forEach((opt,i)=>{
         const btn = document.createElement('button');
         btn.textContent = opt;
         btn.onclick = () => {
-            if(i===correctIndex){ flash('correct'); nextQuestion(); } 
-            else { loseLife(); }
+            if(i === correctIndex){
+                flash('correct');
+                nextQuestion();
+            } else {
+                loseLife();
+            }
         };
         answersDiv.appendChild(btn);
     });
@@ -156,9 +162,9 @@ function showLeaderboard(){
     gameScreen.innerHTML='<h2>LEADERBOARD</h2>';
     const lb=JSON.parse(localStorage.getItem('leaderboard')||'[]');
     const ol=document.createElement('ol');
-    ol.style.color='yellow'; 
+    ol.style.color='yellow';
     ol.style.fontSize='1rem';
-    ol.style.maxHeight='80vh'; 
+    ol.style.maxHeight='80vh';
     ol.style.overflowY='auto';
     ol.style.padding='0 1rem';
     lb.forEach(entry=>{

@@ -11,6 +11,17 @@ body {
   overflow: hidden;
 }
 
+/* ---------- FLASH STATES ---------- */
+body.correct {
+  background: #0f0;
+  transition: background 0.15s;
+}
+
+body.wrong {
+  background: #f00;
+  transition: background 0.15s;
+}
+
 /* ---------- START SCREEN ---------- */
 #start-screen {
   position: fixed;
@@ -66,6 +77,7 @@ body {
   font-size: clamp(14px, 2vw, 28px);
 }
 
+/* ---------- QUESTION ---------- */
 #question-container {
   position: absolute;
   top: 50%;
@@ -100,9 +112,21 @@ body {
   animation: pound 0.4s;
 }
 
-/* ---------- ANIMATION ---------- */
+/* ---------- ANIMATIONS ---------- */
 @keyframes pound {
   0% { transform: scale(0.4); opacity: 0; }
   60% { transform: scale(1.2); opacity: 1; }
   100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0% { transform: translate(-50%, -50%) translateX(0); }
+  25% { transform: translate(-50%, -50%) translateX(-10px); }
+  50% { transform: translate(-50%, -50%) translateX(10px); }
+  75% { transform: translate(-50%, -50%) translateX(-10px); }
+  100% { transform: translate(-50%, -50%) translateX(0); }
+}
+
+.shake {
+  animation: shake 0.3s;
 }

@@ -1,6 +1,3 @@
-/* ======================
-   GLOBAL + FONT
-====================== */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 body {
@@ -12,9 +9,7 @@ body {
   overflow: hidden; /* disable scrolling */
 }
 
-/* ======================
-   CENTER SCREEN (START)
-====================== */
+/* CENTER SCREEN (START) */
 .center-screen {
   display: flex;
   flex-direction: column;
@@ -24,11 +19,12 @@ body {
   text-align: center;
 }
 
-#start-screen h1 {
+#title-text {
   font-size: 2em;
   margin-bottom: 1em;
   color: #ff3d00;
   text-shadow: 2px 2px #000;
+  transition: opacity 0.5s ease;
 }
 
 #username {
@@ -41,11 +37,9 @@ body {
   color: #fff;
   text-align: center;
   font-family: 'Press Start 2P', monospace;
+  transition: opacity 0.5s ease;
 }
 
-/* ======================
-   BUTTONS
-====================== */
 button {
   cursor: pointer;
   border: none;
@@ -70,9 +64,7 @@ button:active {
   box-shadow: inset 2px 2px 6px #000;
 }
 
-/* ======================
-   GAME SCREEN
-====================== */
+/* GAME SCREEN */
 #game-screen {
   padding: 1em;
 }
@@ -98,12 +90,19 @@ button:active {
   font-weight: bold;
   margin-bottom: 1em;
   min-height: 3em;
-  transition: opacity 0.3s ease;
+  opacity: 0;
+  animation-fill-mode: forwards;
 }
 
-/* ======================
-   ANSWER BUTTONS
-====================== */
+/* Pound animation */
+@keyframes pound {
+  0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+  70% { transform: scale(0.9) rotate(-5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* ANSWER BUTTONS */
 #answers button {
   display: block;
   width: 80%;
@@ -111,9 +110,7 @@ button:active {
   margin: 0.5em auto;
 }
 
-/* ======================
-   MINI-GAME BUTTONS
-====================== */
+/* MINI-GAME BUTTONS */
 button.hold-btn, button.wait-btn, button.reverse-btn {
   background: linear-gradient(45deg, #00bfa5, #1de9b6);
   width: 140px;
@@ -121,9 +118,7 @@ button.hold-btn, button.wait-btn, button.reverse-btn {
   margin: 0.5em;
 }
 
-/* ======================
-   LEADERBOARD
-====================== */
+/* LEADERBOARD */
 #leaderboard {
   padding-top: 2em;
   text-align: center;

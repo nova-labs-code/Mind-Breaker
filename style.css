@@ -3,9 +3,9 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Press Start 2P', sans-serif;
-  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  background: #1f1c2c; /* dark solid background for clarity */
   color: white;
-  overflow: hidden; /* no scroll */
+  overflow: hidden; /* no scrolling */
 }
 
 /* --- Start Screen --- */
@@ -23,7 +23,7 @@ body {
   font-size: 3em;
   color: #fff;
   margin-bottom: 20px;
-  text-shadow: 2px 2px 5px #000;
+  text-shadow: 2px 2px 8px #000;
 }
 
 #username {
@@ -45,6 +45,7 @@ body {
   cursor: pointer;
   background: linear-gradient(135deg, #4affaa, #4a90ff);
   color: white;
+  text-shadow: 1px 1px 3px #000;
   transition: transform 0.2s, background 0.3s;
 }
 
@@ -58,22 +59,21 @@ body {
   width: 100vw;
   height: 100vh;
   position: relative;
-  background: linear-gradient(135deg, #1f1c2c, #928dab);
-  display: block; /* use absolute positioning inside */
+  background: #222; /* simple dark background */
 }
 
 /* Lives & Timer */
 #lives {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 15px;
+  left: 15px;
   font-size: 1.5em;
 }
 
 #timer {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   font-size: 1.5em;
 }
 
@@ -91,7 +91,7 @@ body {
 /* --- Question Text --- */
 #question-text {
   font-family: 'Press Start 2P', sans-serif;
-  font-size: 2.5em;
+  font-size: 3em;
   color: #fffa;
   text-shadow: 2px 2px 5px #000;
   animation: pound 0.5s;
@@ -117,13 +117,14 @@ body {
 
 #answers button {
   font-family: 'Press Start 2P', sans-serif;
-  font-size: 1.2em;
-  padding: 10px 20px;
+  font-size: 1.3em;
+  padding: 12px 25px;
   background: linear-gradient(135deg, #ff4a4a, #ffbd4a);
   color: white;
   border: 2px solid #fff;
   border-radius: 12px;
   cursor: pointer;
+  text-shadow: 1px 1px 2px #000;
   transition: transform 0.2s, background 0.3s;
 }
 
@@ -135,13 +136,14 @@ body {
 /* --- Mini Games Buttons --- */
 .hold-btn {
   font-family: 'Press Start 2P', sans-serif;
-  font-size: 1.2em;
+  font-size: 1.3em;
   padding: 15px 30px;
   border-radius: 12px;
   border: 2px solid #fff;
   cursor: pointer;
   background: linear-gradient(135deg, #f3a683, #f7d794);
   color: #222;
+  text-shadow: 1px 1px 2px #fff;
   transition: transform 0.2s, background 0.3s;
 }
 
@@ -160,7 +162,7 @@ body {
   align-items: center;
   padding-top: 50px;
   font-size: 1.2em;
-  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  background: #111;
 }
 
 #leaderboard-list {

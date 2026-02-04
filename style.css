@@ -5,13 +5,7 @@ body {
   font-family: 'Press Start 2P', sans-serif;
   background: linear-gradient(135deg, #1f1c2c, #928dab);
   color: white;
-  overflow: hidden; /* disable scrolling */
-}
-
-h1, h2, h3 {
-  margin: 0;
-  padding: 0;
-  text-align: center;
+  overflow: hidden; /* no scroll */
 }
 
 /* --- Start Screen --- */
@@ -63,13 +57,9 @@ h1, h2, h3 {
 #game-screen {
   width: 100vw;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* vertical centering */
-  align-items: center;     /* horizontal centering */
   position: relative;
-  overflow: hidden;
   background: linear-gradient(135deg, #1f1c2c, #928dab);
+  display: block; /* use absolute positioning inside */
 }
 
 /* Lives & Timer */
@@ -87,24 +77,34 @@ h1, h2, h3 {
   font-size: 1.5em;
 }
 
+/* --- Question Container --- */
+#question-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90%;
+  max-width: 800px;
+}
+
 /* --- Question Text --- */
 #question-text {
   font-family: 'Press Start 2P', sans-serif;
   font-size: 2.5em;
   color: #fffa;
-  text-align: center;
-  animation: pound 0.5s;
   text-shadow: 2px 2px 5px #000;
-  margin-bottom: 30px; /* space between question and answers */
+  animation: pound 0.5s;
+  margin-bottom: 30px;
 }
 
 /* Pound animation */
 @keyframes pound {
-  0%   { transform: scale(0.5); opacity: 0; }
-  30%  { transform: scale(1.2); opacity: 1; }
-  50%  { transform: scale(0.9); }
-  70%  { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0%   { transform: translateY(-50%) scale(0.5); opacity: 0; }
+  30%  { transform: translateY(-50%) scale(1.2); opacity: 1; }
+  50%  { transform: translateY(-50%) scale(0.9); }
+  70%  { transform: translateY(-50%) scale(1.05); }
+  100% { transform: translateY(-50%) scale(1); }
 }
 
 /* --- Answers --- */

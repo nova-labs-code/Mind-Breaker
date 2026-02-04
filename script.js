@@ -13,33 +13,45 @@ let lives = 3;
 let startTime;
 let timerInterval;
 
-/* ---------- AUDIO ---------- */
+/* ================= AUDIO (FIXED) ================= */
 const tracks = [];
+let currentTrack = 0;
+
 for (let i = 1; i <= 8; i++) {
   const a = new Audio(`music/music${i}.mp3`);
-  a.loop = true;
   a.volume = 0.5;
+  a.addEventListener('ended', () => {
+    currentTrack = (currentTrack + 1) % tracks.length;
+    playMusic();
+  });
   tracks.push(a);
 }
 
-/* ---------- LOAD QUESTIONS ---------- */
+function playMusic() {
+  tracks.forEach(t => {
+    t.pause();
+    t.currentTime = 0;
+  });
+  tracks[currentTrack].play().catch(()=>{});
+}
+
+/* ================= LOAD QUESTIONS ================= */
 async function loadQuestions() {
   const files = ['medium','hard','trick','playable'];
   let all = [];
 
   for (const f of files) {
-    const data = await fetch(`questions/${f}.json`).then(r => r.json());
+    const res = await fetch(`questions/${f}.json`);
+    const data = await res.json();
     all.push(...data);
   }
 
   return all.sort((a,b)=>a.num-b.num);
 }
 
-/* ---------- GAME START ---------- */
+/* ================= GAME START ================= */
 playBtn.onclick = async () => {
-  // REQUIRED for audio
-  tracks.forEach(a => a.play().catch(()=>{}));
-
+  playMusic();               // ✅ audio now starts correctly
   startScreen.remove();
   gameScreen.style.display = 'block';
 
@@ -50,7 +62,7 @@ playBtn.onclick = async () => {
   showQuestion();
 };
 
-/* ---------- TIMER ---------- */
+/* ================= TIMER ================= */
 function startTimer() {
   timerInterval = setInterval(() => {
     timerEl.textContent =
@@ -58,7 +70,7 @@ function startTimer() {
   }, 100);
 }
 
-/* ---------- LIVES ---------- */
+/* ================= LIVES ================= */
 function updateLives() {
   livesEl.textContent = '❤ '.repeat(lives);
 }
@@ -71,7 +83,7 @@ function loseLife() {
   if (lives <= 0) location.reload();
 }
 
-/* ---------- VISUAL FEEDBACK ---------- */
+/* ================= VISUAL FEEDBACK ================= */
 function flash(type) {
   document.body.classList.add(type);
   setTimeout(() => document.body.classList.remove(type), 150);
@@ -83,72 +95,91 @@ function shake() {
   container.classList.add('shake');
 }
 
-/* ---------- QUESTIONS ---------- */
+/* ================= QUESTIONS ================= */
 function showQuestion() {
   answersDiv.innerHTML = '';
-  const q = questions[index];
 
+  const q = questions[index];
   questionText.textContent = q.q;
+
   questionText.style.animation = 'none';
   void questionText.offsetWidth;
   questionText.style.animation = 'pound 0.4s';
 
-  if (q.type === 'normal') {
-    q.options.forEach((opt,i)=>{
-      const b = document.createElement('button');
-      b.textContent = opt;
-      b.onclick = () => {
-        if (i === q.answer) {
-          flash('correct');
-          next();
-        } else {
-          loseLife();
-        }
-      };
-      answersDiv.appendChild(b);
-    });
-  }
-
-  if (q.type === 'mini') runMini(q);
+  if (q.type === 'normal') renderNormal(q);
+  if (q.type === 'mini') renderMini(q);
 }
 
-/* ---------- MINI GAMES ---------- */
-function runMini(q) {
+/* ================= NORMAL ================= */
+function renderNormal(q) {
+  q.options.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.onclick = () => {
+      if (i === q.answer) {
+        flash('correct');
+        next();
+      } else {
+        loseLife();
+      }
+    };
+    answersDiv.appendChild(btn);
+  });
+}
+
+/* ================= MINI GAMES (FIXED) ================= */
+function renderMini(q) {
+
+  // HOLD BUTTON
   if (q.mini === 'hold') {
-    const b = document.createElement('button');
-    b.textContent = 'HOLD';
-    let t;
-    b.onmousedown = () => t = setTimeout(()=>{ flash('correct'); next(); }, q.duration);
-    b.onmouseup = () => clearTimeout(t);
-    answersDiv.appendChild(b);
+    const btn = document.createElement('button');
+    btn.textContent = 'HOLD';
+    let timer;
+
+    btn.onmousedown = () => {
+      timer = setTimeout(() => {
+        flash('correct');
+        next();
+      }, q.duration);
+    };
+
+    btn.onmouseup = btn.onmouseleave = () => {
+      clearTimeout(timer);
+    };
+
+    answersDiv.appendChild(btn);
   }
 
+  // WAIT THEN CLICK
   if (q.mini === 'wait') {
-    const b = document.createElement('button');
-    b.textContent = 'CLICK';
-    const appear = Date.now();
-    b.onclick = () => {
-      Math.abs(Date.now()-appear-q.duration) < 200
+    const btn = document.createElement('button');
+    btn.textContent = 'CLICK';
+    const start = Date.now();
+
+    btn.onclick = () => {
+      Math.abs(Date.now() - start - q.duration) < 200
         ? (flash('correct'), next())
         : loseLife();
     };
-    answersDiv.appendChild(b);
+
+    answersDiv.appendChild(btn);
   }
 
+  // REVERSE
   if (q.mini === 'reverse') {
-    ['Correct','Wrong'].forEach(txt=>{
-      const b = document.createElement('button');
-      b.textContent = txt;
-      b.onclick = () =>
-        txt === 'Wrong'
+    ['Correct','Wrong'].forEach(text => {
+      const btn = document.createElement('button');
+      btn.textContent = text;
+      btn.onclick = () =>
+        text === 'Wrong'
           ? (flash('correct'), next())
           : loseLife();
-      answersDiv.appendChild(b);
+      answersDiv.appendChild(btn);
     });
   }
 }
 
-/* ---------- NEXT ---------- */
+/* ================= NEXT ================= */
 function next() {
   index++;
   showQuestion();

@@ -1,9 +1,8 @@
-/* All buttons */
 button {
   padding: 0.7em 1.5em;
-  font-size: 1em;
+  font-size: 1.1em;
   margin: 0.3em;
-  border-radius: 5px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
@@ -17,11 +16,10 @@ button:active {
   transform: scale(0.95);
 }
 
-/* Question buttons */
 #answers button {
   display: block;
   width: 80%;
-  max-width: 300px;
+  max-width: 350px;
   margin: 0.5em auto;
   background-color: #1e88e5;
   color: white;
@@ -29,15 +27,4 @@ button:active {
 
 #answers button:hover {
   background-color: #1565c0;
-}
-
-/* Start and audio buttons */
-#start-btn, #play-audio-btn, #credits-btn {
-  background-color: #43a047;
-  color: #fff;
-  margin: 0.5em;
-}
-
-#start-btn:hover, #play-audio-btn:hover, #credits-btn:hover {
-  background-color: #2e7d32;
 }

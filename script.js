@@ -5,6 +5,7 @@ const questionText = document.getElementById('question-text');
 const answersDiv = document.getElementById('answers');
 const timerEl = document.getElementById('timer');
 const livesEl = document.getElementById('lives');
+const container = document.getElementById('question-container');
 
 let questions = [];
 let index = 0;
@@ -17,14 +18,14 @@ const tracks = [];
 for (let i = 1; i <= 8; i++) {
   const a = new Audio(`music/music${i}.mp3`);
   a.loop = true;
+  a.volume = 0.5;
   tracks.push(a);
 }
-tracks.forEach(a => a.play().catch(()=>{}));
 
 /* ---------- LOAD QUESTIONS ---------- */
 async function loadQuestions() {
   const files = ['medium','hard','trick','playable'];
-  const all = [];
+  let all = [];
 
   for (const f of files) {
     const data = await fetch(`questions/${f}.json`).then(r => r.json());
@@ -36,8 +37,8 @@ async function loadQuestions() {
 
 /* ---------- GAME START ---------- */
 playBtn.onclick = async () => {
-  const name = document.getElementById('username').value.trim();
-  if (!name) return;
+  // REQUIRED for audio
+  tracks.forEach(a => a.play().catch(()=>{}));
 
   startScreen.remove();
   gameScreen.style.display = 'block';
@@ -52,8 +53,9 @@ playBtn.onclick = async () => {
 /* ---------- TIMER ---------- */
 function startTimer() {
   timerInterval = setInterval(() => {
-    timerEl.textContent = ((Date.now()-startTime)/1000).toFixed(1)+'s';
-  },100);
+    timerEl.textContent =
+      ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+  }, 100);
 }
 
 /* ---------- LIVES ---------- */
@@ -62,9 +64,23 @@ function updateLives() {
 }
 
 function loseLife() {
+  flash('wrong');
+  shake();
   lives--;
   updateLives();
   if (lives <= 0) location.reload();
+}
+
+/* ---------- VISUAL FEEDBACK ---------- */
+function flash(type) {
+  document.body.classList.add(type);
+  setTimeout(() => document.body.classList.remove(type), 150);
+}
+
+function shake() {
+  container.classList.remove('shake');
+  void container.offsetWidth;
+  container.classList.add('shake');
 }
 
 /* ---------- QUESTIONS ---------- */
@@ -81,7 +97,14 @@ function showQuestion() {
     q.options.forEach((opt,i)=>{
       const b = document.createElement('button');
       b.textContent = opt;
-      b.onclick = () => i===q.answer ? next() : loseLife();
+      b.onclick = () => {
+        if (i === q.answer) {
+          flash('correct');
+          next();
+        } else {
+          loseLife();
+        }
+      };
       answersDiv.appendChild(b);
     });
   }
@@ -95,8 +118,8 @@ function runMini(q) {
     const b = document.createElement('button');
     b.textContent = 'HOLD';
     let t;
-    b.onmousedown = ()=> t=setTimeout(next,q.duration);
-    b.onmouseup = ()=> clearTimeout(t);
+    b.onmousedown = () => t = setTimeout(()=>{ flash('correct'); next(); }, q.duration);
+    b.onmouseup = () => clearTimeout(t);
     answersDiv.appendChild(b);
   }
 
@@ -104,17 +127,22 @@ function runMini(q) {
     const b = document.createElement('button');
     b.textContent = 'CLICK';
     const appear = Date.now();
-    b.onclick = ()=>{
-      Math.abs(Date.now()-appear-q.duration)<200 ? next() : loseLife();
+    b.onclick = () => {
+      Math.abs(Date.now()-appear-q.duration) < 200
+        ? (flash('correct'), next())
+        : loseLife();
     };
     answersDiv.appendChild(b);
   }
 
   if (q.mini === 'reverse') {
     ['Correct','Wrong'].forEach(txt=>{
-      const b=document.createElement('button');
-      b.textContent=txt;
-      b.onclick=()=> txt==='Wrong'?next():loseLife();
+      const b = document.createElement('button');
+      b.textContent = txt;
+      b.onclick = () =>
+        txt === 'Wrong'
+          ? (flash('correct'), next())
+          : loseLife();
       answersDiv.appendChild(b);
     });
   }

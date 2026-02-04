@@ -1,8 +1,5 @@
+// script.js (same as previous consolidated JS)
 document.addEventListener('DOMContentLoaded', () => {
-
-  // ======================
-  // VARIABLES
-  // ======================
   let questions = [];
   let current = 0;
   let lives = 3;
@@ -14,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let audioIndex = 1;
   const totalTracks = 8;
 
-  // DOM ELEMENTS
   const playBtn = document.getElementById('play-btn');
   const questionText = document.getElementById('question-text');
   const answersDiv = document.getElementById('answers');
@@ -25,17 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const leaderboardDiv = document.getElementById('leaderboard');
   const leaderboardList = document.getElementById('leaderboard-list');
 
-  // ======================
-  // LOAD QUESTIONS
-  // ======================
   async function loadQuestions() {
     try {
-      const medium = await fetch('questions/medium.json').then(r => r.json());
-      const hard = await fetch('questions/hard.json').then(r => r.json());
-      const trick = await fetch('questions/trick.json').then(r => r.json());
-      const playable = await fetch('questions/playable.json').then(r => r.json());
+      const medium = await fetch('medium.json').then(r => r.json());
+      const hard = await fetch('hard.json').then(r => r.json());
+      const trick = await fetch('trick.json').then(r => r.json());
+      const playable = await fetch('playable.json').then(r => r.json());
       questions = [...medium, ...trick, ...playable, ...hard];
-      questions.sort((a,b) => a.num - b.num); // fixed order
+      questions.sort((a,b) => a.num - b.num);
       playBtn.disabled = false;
       playBtn.textContent = "Play!";
     } catch (err) {
@@ -44,14 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ======================
-  // START GAME
-  // ======================
   function startGame() {
     username = document.getElementById('username').value.trim();
     if (!username) { alert("Enter a username!"); return; }
 
-    // Ensure unique username
     let count = leaderboard.filter(l => l.name.startsWith(username)).length;
     username = count ? `${username}#${count+1}` : username;
 
@@ -63,17 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
     startTime = Date.now();
     updateLives();
     startTimer();
-
     playBackgroundAudio();
     showQuestion();
   }
 
-  // ======================
-  // TIMER & LIVES
-  // ======================
-  function updateLives() {
-    livesDiv.textContent = '❤️'.repeat(lives);
-  }
+  function updateLives() { livesDiv.textContent = '❤️'.repeat(lives); }
 
   function startTimer() {
     timerInterval = setInterval(() => {
@@ -84,25 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function stopTimer() { clearInterval(timerInterval); }
 
-  // ======================
-  // SHOW QUESTION
-  // ======================
   function showQuestion() {
     if (current >= questions.length) return endQuiz();
     const q = questions[current];
-
-    // Fade-in effect
     questionText.style.opacity = 0;
     setTimeout(() => { questionText.textContent = q.q; questionText.style.opacity = 1; }, 50);
-
     answersDiv.innerHTML = '';
+    if (q.type === 'mini') { runMiniGame(q); return; }
 
-    if (q.type === 'mini') { 
-      runMiniGame(q); 
-      return; 
-    }
-
-    // Normal options
     q.options.forEach((opt,i) => {
       const btn = document.createElement('button');
       btn.textContent = opt;
@@ -111,9 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ======================
-  // CHECK ANSWER
-  // ======================
   function checkAnswer(selected) {
     const q = questions[current];
     if (selected === q.answer) {
@@ -126,9 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ======================
-  // END QUIZ & LEADERBOARD
-  // ======================
   function endQuiz() {
     stopTimer();
     const totalTime = ((Date.now() - startTime)/1000).toFixed(2);
@@ -146,27 +112,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ======================
-  // BACKGROUND MUSIC LOOP
-  // ======================
   function playBackgroundAudio() {
     if (bgAudio && !bgAudio.paused) return;
 
-    bgAudio = new Audio(`music/music${audioIndex}.mp3`);
+    bgAudio = new Audio(`music${audioIndex}.mp3`);
     bgAudio.volume = 0.5;
     bgAudio.play().catch(e => console.log('Audio blocked:', e));
 
     bgAudio.onended = () => {
       audioIndex++;
       if (audioIndex > totalTracks) audioIndex = 1;
-      bgAudio.src = `music/music${audioIndex}.mp3`;
+      bgAudio.src = `music${audioIndex}.mp3`;
       bgAudio.play().catch(e => console.log('Audio blocked:', e));
     };
   }
 
-  // ======================
-  // MINI-GAME HANDLER
-  // ======================
   function runMiniGame(q) {
     answersDiv.innerHTML = '';
     let btn = document.createElement('button');
@@ -180,16 +140,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (holding) { current++; showQuestion(); }
       }, q.duration); };
       btn.onmouseup = () => { holding = false; lives--; updateLives(); if(lives<=0){alert("Game Over"); location.reload();} };
-    }
-    else if (q.mini === 'wait') {
+    } else if (q.mini === 'wait') {
       btn.onclick = () => {
         const elapsed = performance.now() - startTime;
         if (elapsed >= q.duration-200 && elapsed <= q.duration+200) { current++; showQuestion(); }
         else { lives--; updateLives(); if(lives<=0){alert("Game Over"); location.reload();} }
       };
-    }
-    else if (q.mini === 'avoid') {
-      // Example: Click safe button among multiple buttons
+    } else if (q.mini === 'avoid') {
       for (let i=1;i<=q.buttons;i++){
         let b = document.createElement('button');
         b.textContent = `Button ${i}`;
@@ -199,16 +156,11 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         answersDiv.appendChild(b);
       }
-    }
-    else {
-      // fallback
+    } else {
       btn.onclick = () => { current++; showQuestion(); };
     }
   }
 
-  // ======================
-  // INIT
-  // ======================
   playBtn.addEventListener('click', startGame);
   loadQuestions();
   updateLives();

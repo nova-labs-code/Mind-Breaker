@@ -29,16 +29,6 @@ let musicIndex = 0;
 const bgMusic = new Audio();
 bgMusic.volume = 0.1;
 
-// ==================== SOUND EFFECTS (ONLINE) ====================
-const sfxCorrect = new Audio(
-  'https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'
-);
-const sfxWrong = new Audio(
-  'https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg'
-);
-sfxCorrect.volume = 1;
-sfxWrong.volume = 1;
-
 // ==================== JSONBIN ====================
 const BIN_ID = '698280e6d0ea881f409e978f';
 const API_KEY = '$2a$10$YENQL1visC/5iaLFbd2rcu3wuHMmYBB5uvPlu.SWdFXD.LBIMIQy6';
@@ -112,25 +102,52 @@ function startTimer(){
 function updateLives(){
   livesEl.textContent = '❤ '.repeat(lives);
 }
+
 function loseLife(){
-  sfxWrong.currentTime = 0;
-  sfxWrong.play();
   flash('wrong');
-  shake();
+  showIcon('❌', 10);
   lives--;
   updateLives();
   if(lives <= 0) location.reload();
 }
 
-// ==================== FEEDBACK ====================
+// ==================== FLASH ====================
 function flash(type){
   document.body.classList.add(type);
   setTimeout(()=>document.body.classList.remove(type),150);
 }
-function shake(){
-  questionContainer.classList.remove('shake');
-  void questionContainer.offsetWidth;
-  questionContainer.classList.add('shake');
+
+// ==================== VISUAL ICON + SHAKE ====================
+function showIcon(symbol, shakeIntensity = 0){
+  const icon = document.createElement('div');
+  icon.textContent = symbol;
+  icon.classList.add('feedback-icon');
+  document.body.appendChild(icon);
+
+  // float & fade
+  setTimeout(()=>{
+    icon.style.transform = 'translate(-50%, -50%) translateY(-60px)';
+    icon.style.opacity = 0;
+  }, 50);
+
+  setTimeout(()=> icon.remove(), 600);
+
+  // shake screen if intensity > 0
+  if(shakeIntensity > 0){
+    const body = document.body;
+    body.style.transition = 'transform 0.05s';
+    let i = 0;
+    const interval = setInterval(()=>{
+      const x = (Math.random()*2-1)*shakeIntensity;
+      const y = (Math.random()*2-1)*shakeIntensity;
+      body.style.transform = `translate(${x}px,${y}px)`;
+      i++;
+      if(i>5){
+        clearInterval(interval);
+        body.style.transform = 'translate(0,0)';
+      }
+    },50);
+  }
 }
 
 // ==================== QUESTIONS ====================
@@ -150,17 +167,16 @@ function showQuestion(){
   const options = shuffle([...q.options]);
   const correctIndex = options.indexOf(q.options[0]);
 
-  options.forEach((opt, i)=>{
+  options.forEach((opt,i)=>{
     const btn = document.createElement('button');
     btn.textContent = opt;
     btn.onclick = () => {
-      if(i === correctIndex){
-        sfxCorrect.currentTime = 0;
-        sfxCorrect.play();
+      if(i===correctIndex){
         flash('correct');
+        showIcon('✅',3);
         currentIndex++;
         showQuestion();
-      } else {
+      }else{
         loseLife();
       }
     };
@@ -171,54 +187,63 @@ function showQuestion(){
 // ==================== FINISH ====================
 function finishQuiz(){
   clearInterval(timerInterval);
-  const time = ((Date.now() - startTime) / 1000).toFixed(2);
+  const time = ((Date.now() - startTime)/1000).toFixed(2);
 
-  saveLocalScore(username, time);
-  saveScoreToJsonBin(username, time);
+  saveLocalScore(username,time);
+  saveScoreToJsonBin(username,time);
   showLeaderboard();
 }
 
 // ==================== LOCAL LEADERBOARD ====================
-function saveLocalScore(user, time){
-  const lb = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-  lb.push({ username: user, time: parseFloat(time) });
+function saveLocalScore(user,time){
+  const lb = JSON.parse(localStorage.getItem('leaderboard')||'[]');
+  lb.push({username:user,time:parseFloat(time)});
   lb.sort((a,b)=>a.time-b.time);
-  if(lb.length > 1000) lb.length = 1000;
-  localStorage.setItem('leaderboard', JSON.stringify(lb));
+  if(lb.length>1000) lb.length=1000;
+  localStorage.setItem('leaderboard',JSON.stringify(lb));
 }
 
 // ==================== JSONBIN SAVE ====================
-async function saveScoreToJsonBin(user, time){
+async function saveScoreToJsonBin(user,time){
   try{
-    const getRes = await fetch(
-      `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,
-      { headers: { 'X-Master-Key': API_KEY } }
-    );
+    const getRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,
+      {headers:{'X-Master-Key':API_KEY}});
     const json = await getRes.json();
-    const data = json.record || { leaderboard: [] };
-
-    data.leaderboard.push({ username: user, time: parseFloat(time) });
+    const data = json.record || {leaderboard:[]};
+    data.leaderboard.push({username:user,time:parseFloat(time)});
     data.leaderboard.sort((a,b)=>a.time-b.time);
-    if(data.leaderboard.length > 1000)
-      data.leaderboard.length = 1000;
+    if(data.leaderboard.length>1000) data.leaderboard.length=1000;
 
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': API_KEY
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`,{
+      method:'PUT',
+      headers:{
+        'Content-Type':'application/json',
+        'X-Master-Key':API_KEY
       },
-      body: JSON.stringify(data)
+      body:JSON.stringify(data)
     });
-  }catch(e){
-    console.error('JSONBin error', e);
-  }
+  }catch(e){console.error('JSONBin error',e);}
 }
 
-// ==================== SHOW LEADERBOARD ====================
-function showLeaderboard(){
+// ==================== SHOW LEADERBOARD (JSONBIN) ====================
+async function showLeaderboard(){
   gameScreen.innerHTML = '<h2>LEADERBOARD</h2>';
-  const lb = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+
+  let lb = [];
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': API_KEY }
+    });
+    const json = await res.json();
+    lb = json.record?.leaderboard || [];
+  } catch(e){
+    console.error('Error fetching leaderboard:', e);
+    lb = JSON.parse(localStorage.getItem('leaderboard') || '[]'); // fallback
+  }
+
+  // Sort by fastest time
+  lb.sort((a,b)=>a.time-b.time);
+
   const ol = document.createElement('ol');
   lb.forEach(e=>{
     const li = document.createElement('li');
@@ -228,25 +253,19 @@ function showLeaderboard(){
   gameScreen.appendChild(ol);
 }
 
-// ==================== CHANGE USERNAME BUTTON ====================
+// ==================== CHANGE USERNAME ====================
 function addChangeUsernameButton(){
-  const btn = document.createElement('button');
-  btn.textContent = 'Change Username';
+  const btn=document.createElement('button');
+  btn.textContent='Change Username';
   Object.assign(btn.style,{
-    position:'fixed',
-    bottom:'20px',
-    left:'20px',
-    width:'120px',
-    height:'42px',
-    fontSize:'0.9rem',
-    zIndex:9999
+    position:'fixed',bottom:'20px',left:'20px',width:'120px',height:'42px',fontSize:'0.9rem',zIndex:9999
   });
-  btn.onclick = ()=>{
-    const n = prompt('New username:', username);
+  btn.onclick=()=>{
+    const n=prompt('New username:',username);
     if(n){
-      username = n.trim();
-      localStorage.setItem('username', username);
-      usernameDisplay.textContent = username;
+      username=n.trim();
+      localStorage.setItem('username',username);
+      usernameDisplay.textContent=username;
     }
   };
   document.body.appendChild(btn);

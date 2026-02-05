@@ -1,4 +1,6 @@
-meInput = document.getElementById('username');
+// ==================== ELEMENTS ====================
+const playBtn = document.getElementById('play-btn');
+const usernameInput = document.getElementById('username');
 const startScreen = document.getElementById('start-screen');
 const gameScreen = document.getElementById('game-screen');
 const questionContainer = document.getElementById('question-container');

@@ -14,7 +14,7 @@ const usernameDisplay = document.getElementById('username-display');
 // ==================== STATE ====================
 let questions = [];
 let currentIndex = 0;
-let lives = 3;
+let lives = 5;
 let startTime;
 let timerInterval;
 let username = localStorage.getItem('username') || null;

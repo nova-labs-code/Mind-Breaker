@@ -32,25 +32,28 @@ bgMusic.volume = originalMusicVolume;
 
 // ==================== SOUND EFFECTS ====================
 const sfxCorrect = new Audio(
-  'https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'
+  'https://actions.google.com/sounds/v1/cartoon/clang.ogg'
 );
 const sfxWrong = new Audio(
   'https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg'
 );
-sfxCorrect.volume = 1.0;
-sfxWrong.volume = 1.0;
+sfxCorrect.volume = 1.0; // max volume
+sfxWrong.volume = 1.0;   // max volume
 
-let sfxPlaying = 0; // counter for simultaneous SFX
+let sfxPlaying = 0;
 
+// Play SFX at max volume, mute background music
 function playSFX(sfx){
     sfxPlaying++;
-    if(bgMusic.volume > 0) bgMusic.volume = originalMusicVolume / 2.3;
+    bgMusic.volume = 0; // mute music
 
     sfx.currentTime = 0;
     sfx.play();
     sfx.onended = () => {
         sfxPlaying--;
-        if(sfxPlaying <= 0) bgMusic.volume = originalMusicVolume;
+        if(sfxPlaying <= 0){
+            bgMusic.volume = originalMusicVolume; // restore music
+        }
     };
 }
 
@@ -214,7 +217,8 @@ async function saveScoreToJsonBin(user, time){
 
     data.leaderboard.push({ username: user, time: parseFloat(time) });
     data.leaderboard.sort((a,b)=>a.time-b.time);
-    if(data.leaderboard.length > 1000) data.leaderboard.length = 1000;
+    if(data.leaderboard.length > 1000)
+      data.leaderboard.length = 1000;
 
     await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: 'PUT',

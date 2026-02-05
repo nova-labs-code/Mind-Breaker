@@ -1,6 +1,4 @@
-// ==================== ELEMENTS ====================
-const playBtn = document.getElementById('play-btn');
-const usernameInput = document.getElementById('username');
+meInput = document.getElementById('username');
 const startScreen = document.getElementById('start-screen');
 const gameScreen = document.getElementById('game-screen');
 const questionContainer = document.getElementById('question-container');
@@ -26,36 +24,18 @@ const musicFiles = [
   'music/music7.mp3','music/music8.mp3'
 ];
 let musicIndex = 0;
-const originalMusicVolume = 0.3;
 const bgMusic = new Audio();
-bgMusic.volume = originalMusicVolume;
+bgMusic.volume = 0.2;
 
-// ==================== SOUND EFFECTS ====================
+// ==================== SOUND EFFECTS (ONLINE) ====================
 const sfxCorrect = new Audio(
-  'https://actions.google.com/sounds/v1/cartoon/clang.ogg'
+  'https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'
 );
 const sfxWrong = new Audio(
   'https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg'
 );
-sfxCorrect.volume = 1.0; // max volume
-sfxWrong.volume = 1.0;   // max volume
-
-let sfxPlaying = 0;
-
-// Play SFX at max volume, mute background music
-function playSFX(sfx){
-    sfxPlaying++;
-    bgMusic.volume = 0; // mute music
-
-    sfx.currentTime = 0;
-    sfx.play();
-    sfx.onended = () => {
-        sfxPlaying--;
-        if(sfxPlaying <= 0){
-            bgMusic.volume = originalMusicVolume; // restore music
-        }
-    };
-}
+sfxCorrect.volume = 1;
+sfxWrong.volume = 1;
 
 // ==================== JSONBIN ====================
 const BIN_ID = '698280e6d0ea881f409e978f';
@@ -90,15 +70,15 @@ if(username){
 // ==================== START ====================
 playBtn.onclick = async () => {
   if(!username){
-    const val = usernameInput?.value?.trim();
+    const val = usernameInput.value.trim();
     if(!val) return alert('Enter username');
     username = val;
     localStorage.setItem('username', username);
   }
 
-  if(startScreen) startScreen.remove();
-  if(gameScreen) gameScreen.style.display = 'flex';
-  if(usernameDisplay) usernameDisplay.textContent = username;
+  startScreen.remove();
+  gameScreen.style.display = 'flex';
+  usernameDisplay.textContent = username;
 
   questions = await loadQuestions();
   if(!questions.length) return alert('No questions');
@@ -109,14 +89,12 @@ playBtn.onclick = async () => {
   showQuestion();
   addChangeUsernameButton();
 
-  // Play background music
-  musicIndex = 0;
-  bgMusic.src = musicFiles[musicIndex];
-  bgMusic.play().catch(()=>{});
+  bgMusic.src = musicFiles[0];
+  bgMusic.play();
   bgMusic.onended = () => {
     musicIndex = (musicIndex + 1) % musicFiles.length;
     bgMusic.src = musicFiles[musicIndex];
-    bgMusic.play().catch(()=>{});
+    bgMusic.play();
   };
 };
 
@@ -124,7 +102,7 @@ playBtn.onclick = async () => {
 function startTimer(){
   timerInterval = setInterval(()=>{
     timerEl.textContent =
-      ((Date.now() - startTime)/1000).toFixed(1) + 's';
+      ((Date.now() - startTime) / 1000).toFixed(1) + 's';
   }, 100);
 }
 
@@ -133,7 +111,8 @@ function updateLives(){
   livesEl.textContent = '❤ '.repeat(lives);
 }
 function loseLife(){
-  playSFX(sfxWrong);
+  sfxWrong.currentTime = 0;
+  sfxWrong.play();
   flash('wrong');
   shake();
   lives--;
@@ -174,7 +153,8 @@ function showQuestion(){
     btn.textContent = opt;
     btn.onclick = () => {
       if(i === correctIndex){
-        playSFX(sfxCorrect);
+        sfxCorrect.currentTime = 0;
+        sfxCorrect.play();
         flash('correct');
         currentIndex++;
         showQuestion();
@@ -189,7 +169,7 @@ function showQuestion(){
 // ==================== FINISH ====================
 function finishQuiz(){
   clearInterval(timerInterval);
-  const time = ((Date.now() - startTime)/1000).toFixed(2);
+  const time = ((Date.now() - startTime) / 1000).toFixed(2);
 
   saveLocalScore(username, time);
   saveScoreToJsonBin(username, time);
@@ -248,11 +228,7 @@ function showLeaderboard(){
 
 // ==================== CHANGE USERNAME BUTTON ====================
 function addChangeUsernameButton(){
-  const existing = document.getElementById('change-username-btn');
-  if(existing) existing.remove();
-
   const btn = document.createElement('button');
-  btn.id = 'change-username-btn';
   btn.textContent = 'Change Username';
   Object.assign(btn.style,{
     position:'fixed',
@@ -268,7 +244,7 @@ function addChangeUsernameButton(){
     if(n){
       username = n.trim();
       localStorage.setItem('username', username);
-      if(usernameDisplay) usernameDisplay.textContent = username;
+      usernameDisplay.textContent = username;
     }
   };
   document.body.appendChild(btn);

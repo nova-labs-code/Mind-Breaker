@@ -153,43 +153,34 @@ body, html {
   top: 1rem;
   left: 1rem;
   display: flex;
-  gap: 1px;              /* SUPER TIGHT */
+  gap: 0px; /* hearts are tight */
 }
 
-/* HEART BASE */
+/* Heart pixel grid */
 .pixel-heart {
-  width: 6px;
-  height: 6px;
-  position: relative;
-  transform: scale(2);
+  display: grid;
+  grid-template-columns: repeat(5, 8px);
+  grid-template-rows: repeat(5, 8px);
+  gap: 0px;
 }
 
-/* PIXEL SHAPE */
-.pixel-heart::before {
-  content: "";
-  position: absolute;
-  width: 6px;
-  height: 6px;
+.pixel-heart div {
+  width: 8px;
+  height: 8px;
   background: red;
-  box-shadow:
-    6px 0 red,
-    -6px 6px red,
-    0 6px red,
-    6px 6px red,
-    -6px 12px red,
-    0 12px red,
-    6px 12px red,
-    0 18px red;
 }
 
-/* LOW HEALTH EFFECT */
-.pixel-heart.low {
-  animation: blink 0.5s infinite;
-}
+/* Define the pixel heart pattern */
+.pixel-heart div:nth-child(1),
+.pixel-heart div:nth-child(2),
+.pixel-heart div:nth-child(5) { background: transparent; }
 
-@keyframes blink {
-  50% { opacity: 0.3; }
-}
+.pixel-heart div:nth-child(4) { background: transparent; }
+
+/* Create the heart shape using 5x5 squares */
+.pixel-heart div:nth-child(1), .pixel-heart div:nth-child(5) { background: transparent; }
+.pixel-heart div:nth-child(2), .pixel-heart div:nth-child(4) { background: red; }
+.pixel-heart div:nth-child(3) { background: red; }
 
 /* TIMER */
 #timer {

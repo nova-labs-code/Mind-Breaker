@@ -26,10 +26,11 @@ const musicFiles = [
   'music/music7.mp3','music/music8.mp3'
 ];
 let musicIndex = 0;
+const originalMusicVolume = 0.3;
 const bgMusic = new Audio();
-bgMusic.volume = 0.3;
+bgMusic.volume = originalMusicVolume;
 
-// ==================== SOUND EFFECTS (ONLINE) ====================
+// ==================== SOUND EFFECTS ====================
 const sfxCorrect = new Audio(
   'https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'
 );
@@ -39,13 +40,18 @@ const sfxWrong = new Audio(
 sfxCorrect.volume = 1.0;
 sfxWrong.volume = 1.0;
 
-// Play sound effect while muting background music
+let sfxPlaying = 0; // counter for simultaneous SFX
+
 function playSFX(sfx){
-  const originalVolume = bgMusic.volume;
-  bgMusic.volume = 0;
-  sfx.currentTime = 0;
-  sfx.play();
-  sfx.onended = () => { bgMusic.volume = originalVolume; };
+    sfxPlaying++;
+    if(bgMusic.volume > 0) bgMusic.volume = originalMusicVolume / 2.3;
+
+    sfx.currentTime = 0;
+    sfx.play();
+    sfx.onended = () => {
+        sfxPlaying--;
+        if(sfxPlaying <= 0) bgMusic.volume = originalMusicVolume;
+    };
 }
 
 // ==================== JSONBIN ====================
@@ -89,10 +95,7 @@ playBtn.onclick = async () => {
 
   if(startScreen) startScreen.remove();
   if(gameScreen) gameScreen.style.display = 'flex';
-
-  if (usernameDisplay) {
-    usernameDisplay.textContent = username;
-  }
+  if(usernameDisplay) usernameDisplay.textContent = username;
 
   questions = await loadQuestions();
   if(!questions.length) return alert('No questions');
@@ -211,8 +214,7 @@ async function saveScoreToJsonBin(user, time){
 
     data.leaderboard.push({ username: user, time: parseFloat(time) });
     data.leaderboard.sort((a,b)=>a.time-b.time);
-    if(data.leaderboard.length > 1000)
-      data.leaderboard.length = 1000;
+    if(data.leaderboard.length > 1000) data.leaderboard.length = 1000;
 
     await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: 'PUT',

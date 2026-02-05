@@ -1,88 +1,243 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-* { box-sizing: border-box; margin:0; padding:0; font-family:'Press Start 2P', cursive; }
-body, html { width:100%; height:100%; overflow:hidden; display:flex; justify-content:center; align-items:center; background:#111; color:#fff; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Press Start 2P', cursive;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #111;
+  color: #fff;
+}
 
 /* START SCREEN */
-#start-screen { position:absolute; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background-color:#111; transition:opacity 0.5s ease; }
+#start-screen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #111;
+  transition: opacity 0.5s ease;
+}
 
 /* TITLE */
-#title { font-size:3rem; display:flex; justify-content:center; align-items:center; flex-wrap:wrap; margin-bottom:2rem; text-align:center; }
-#title span {
-    display:inline-block;
-    margin:0 1.35px;
-    color: yellow;
-    text-shadow:1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
-    transform: rotate(calc(-12deg + 24deg * var(--i)/11)) translateY(calc(-2px + 4px * var(--i)/11));
-    transition: transform 0.3s, color 0.3s;
+#title {
+  font-size: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  text-align: center;
 }
-#title span:hover { transform: rotate(0deg) translateY(0) scale(1.2); }
+
+#title span {
+  display: inline-block;
+  margin: 0 1.35px;
+  color: yellow;
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 1px 0 #000,
+    1px -1px 0 #000,
+    -1px -1px 0 #000;
+  transform: rotate(calc(-12deg + 24deg * var(--i)/11))
+             translateY(calc(-2px + 4px * var(--i)/11));
+  transition: transform 0.3s, color 0.3s;
+}
+
+#title span:hover {
+  transform: rotate(0deg) translateY(0) scale(1.2);
+}
 
 /* INPUT & BUTTON */
-#start-screen input { font-size:0.8rem; padding:0.5rem 1rem; margin-bottom:1rem; border-radius:5px; border:none; }
-#start-screen button { font-size:0.8rem; padding:0.5rem 1.5rem; background-color:yellow; color:black; border:none; border-radius:5px; cursor:pointer; transition: background 0.2s ease; }
-#start-screen button:hover { background-color:gold; }
+#start-screen input {
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  border: none;
+}
+
+#start-screen button {
+  font-size: 0.8rem;
+  padding: 0.5rem 1.5rem;
+  background-color: yellow;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#start-screen button:hover {
+  background-color: gold;
+}
 
 /* GAME SCREEN */
-#game-screen { display:none; flex-direction:column; justify-content:center; align-items:center; width:100%; height:100%; position:relative; text-align:center; }
+#game-screen {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  text-align: center;
+}
 
-/* QUESTION NUMBER IN CORNER */
-#question-number-corner { position:absolute; top:1rem; right:1rem; font-size:1rem; color:white; }
+/* QUESTION NUMBER */
+#question-number-corner {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1rem;
+}
 
-/* QUESTION CONTAINER */
-#question-container { display:flex; flex-direction:column; align-items:center; justify-content:center; max-width:90%; padding:1rem; }
-#question-text { font-size:1.8rem; color:yellow; margin-bottom:1rem; text-align:center; animation:pound 0.4s; }
+/* QUESTION */
+#question-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 90%;
+  padding: 1rem;
+}
+
+#question-text {
+  font-size: 1.8rem;
+  color: yellow;
+  margin-bottom: 1rem;
+  animation: pound 0.4s;
+}
 
 /* ANSWERS */
-#answers { display:flex; flex-wrap:wrap; justify-content:center; gap:0.8rem; }
-#answers button {
-    font-family:'Press Start 2P', cursive;
-    font-size:0.8rem;
-    padding:0.6rem 1rem;
-    border-radius:5px;
-    border:2px solid yellow;
-    background-color:black;
-    color:yellow;
-    cursor:pointer;
-    min-width:120px;
-    transition:all 0.2s ease;
+#answers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
 }
-#answers button:hover { background-color:yellow; color:black; }
 
-/* LIVES & TIMER */
-#lives { position:absolute; top:1rem; left:1rem; font-size:1.5rem; color:red; }
-#timer { position:absolute; bottom:5%; right:5%; font-size:1.2rem; color:white; }
+#answers button {
+  font-size: 0.8rem;
+  padding: 0.6rem 1rem;
+  border-radius: 5px;
+  border: 2px solid yellow;
+  background-color: black;
+  color: yellow;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+#answers button:hover {
+  background-color: yellow;
+  color: black;
+}
+
+/* ========================= */
+/* PIXELATED HEART LIVES HUD */
+/* ========================= */
+
+#lives {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 1px;              /* SUPER TIGHT */
+}
+
+/* HEART BASE */
+.pixel-heart {
+  width: 6px;
+  height: 6px;
+  position: relative;
+  transform: scale(2);
+}
+
+/* PIXEL SHAPE */
+.pixel-heart::before {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: red;
+  box-shadow:
+    6px 0 red,
+    -6px 6px red,
+    0 6px red,
+    6px 6px red,
+    -6px 12px red,
+    0 12px red,
+    6px 12px red,
+    0 18px red;
+}
+
+/* LOW HEALTH EFFECT */
+.pixel-heart.low {
+  animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.3; }
+}
+
+/* TIMER */
+#timer {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  font-size: 1.2rem;
+}
 
 /* FEEDBACK */
-body.correct { background-color:#0f0; transition: background 0.15s; }
-body.wrong { background-color:#f00; transition: background 0.15s; }
+body.correct {
+  background-color: #0f0;
+  transition: background 0.15s;
+}
 
-/* POUND ANIMATION */
-@keyframes pound { 0%{transform:scale(0.8);}50%{transform:scale(1.2);}100%{transform:scale(1);} }
+body.wrong {
+  background-color: #f00;
+  transition: background 0.15s;
+}
 
-/* SHAKE EFFECT */
-@keyframes shake {0%{transform:translateX(0);}25%{transform:translateX(-5px);}50%{transform:translateX(5px);}75%{transform:translateX(-5px);}100%{transform:translateX(0);}}
-.shake { animation:shake 0.3s; }
+/* ANIMATIONS */
+@keyframes pound {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
 
-/* VISUAL ICON FEEDBACK */
-.feedback-icon {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 4rem;
-    pointer-events: none;
-    opacity: 1;
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-    z-index: 9999;
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.3s;
 }
 
 /* RESPONSIVE */
-@media (max-width:768px){
-    #question-number-corner{font-size:0.8rem;}
-    #question-text{font-size:1.4rem;}
-    #answers button{font-size:0.7rem; min-width:90px; padding:0.5rem 0.8rem;}
-    #timer{font-size:1rem;}
-    #lives{font-size:1.2rem;}
-    #title{font-size:2rem;}
+@media (max-width: 768px) {
+  #question-number-corner { font-size: 0.8rem; }
+  #question-text { font-size: 1.4rem; }
+  #answers button {
+    font-size: 0.7rem;
+    min-width: 90px;
+    padding: 0.5rem 0.8rem;
+  }
+  #timer { font-size: 1rem; }
+  #title { font-size: 2rem; }
 }

@@ -1,3 +1,4 @@
+// ==================== ELEMENTS ====================
 const playBtn = document.getElementById('play-btn');
 const usernameInput = document.getElementById('username');
 const startScreen = document.getElementById('start-screen');
@@ -8,217 +9,245 @@ const questionText = document.getElementById('question-text');
 const answersDiv = document.getElementById('answers');
 const timerEl = document.getElementById('timer');
 const livesEl = document.getElementById('lives');
+const usernameDisplay = document.getElementById('username-display');
 
+// ==================== STATE ====================
 let questions = [];
 let currentIndex = 0;
 let lives = 3;
 let startTime;
 let timerInterval;
-let username;
+let username = localStorage.getItem('username') || null;
 
-// Sequential music files
+// ==================== MUSIC ====================
 const musicFiles = [
-    'music/music1.mp3',
-    'music/music2.mp3',
-    'music/music3.mp3',
-    'music/music4.mp3',
-    'music/music5.mp3',
-    'music/music6.mp3',
-    'music/music7.mp3',
-    'music/music8.mp3'
+  'music/music1.mp3','music/music2.mp3','music/music3.mp3',
+  'music/music4.mp3','music/music5.mp3','music/music6.mp3',
+  'music/music7.mp3','music/music8.mp3'
 ];
 let musicIndex = 0;
-let bgMusic = new Audio();
-bgMusic.loop = false;
+const bgMusic = new Audio();
 bgMusic.volume = 0.3;
 
-// ==================== SHUFFLE UTILITY ====================
+// ==================== SOUND EFFECTS (ONLINE) ====================
+const sfxCorrect = new Audio(
+  'https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'
+);
+const sfxWrong = new Audio(
+  'https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg'
+);
+sfxCorrect.volume = 0.6;
+sfxWrong.volume = 0.6;
+
+// ==================== JSONBIN ====================
+const BIN_ID = '698280e6d0ea881f409e978f';
+const API_KEY = '$2a$10$YENQL1visC/5iaLFbd2rcu3wuHMmYBB5uvPlu.SWdFXD.LBIMIQy6';
+
+// ==================== SHUFFLE ====================
 function shuffle(arr){
-    for(let i=arr.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]] = [arr[j],arr[i]];
-    }
-    return arr;
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
 // ==================== LOAD QUESTIONS ====================
 async function loadQuestions(){
-    try {
-        const data = await fetch('questions.json').then(r => r.json());
-        if(!Array.isArray(data)) return [];
-        data.sort((a,b) => a.num - b.num);
-        return data;
-    } catch(e) {
-        console.warn("Failed to load questions.json", e);
-        return [];
-    }
+  try{
+    const res = await fetch('questions.json');
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  }catch(e){
+    alert('Failed to load questions');
+    return [];
+  }
 }
 
-// ==================== PRE-FILL / HIDE USERNAME ====================
-const savedName = localStorage.getItem('username');
-if(savedName){
-    usernameInput.style.display = 'none';
-} else {
-    usernameInput.style.display = 'inline-block';
+// ==================== USERNAME PREFILL ====================
+if(username){
+  usernameInput.style.display = 'none';
 }
 
-// ==================== START QUIZ ====================
+// ==================== START ====================
 playBtn.onclick = async () => {
-    username = usernameInput.value.trim() || localStorage.getItem('username');
-    if(!username) return alert("Enter username!");
-
+  if(!username){
+    const val = usernameInput.value.trim();
+    if(!val) return alert('Enter username');
+    username = val;
     localStorage.setItem('username', username);
+  }
 
-    startScreen.style.transition = 'opacity 0.5s';
-    startScreen.style.opacity = 0;
-    setTimeout(() => startScreen.remove(), 500);
-    gameScreen.style.display = 'flex';
+  startScreen.remove();
+  gameScreen.style.display = 'flex';
+  usernameDisplay.textContent = username;
 
-    questions = await loadQuestions();
-    if(!questions.length) return alert("No questions loaded!");
+  questions = await loadQuestions();
+  if(!questions.length) return alert('No questions');
 
-    startTime = Date.now();
-    startTimer();
-    updateLives();
-    showQuestion();
+  startTime = Date.now();
+  startTimer();
+  updateLives();
+  showQuestion();
+  addChangeUsernameButton();
 
-    // Always show Change Username button in bottom-left
-    if(!document.getElementById('change-username-btn')){
-        addChangeUsernameButton();
-    }
-
-    // Music
-    musicIndex = 0;
+  bgMusic.src = musicFiles[0];
+  bgMusic.play();
+  bgMusic.onended = () => {
+    musicIndex = (musicIndex + 1) % musicFiles.length;
     bgMusic.src = musicFiles[musicIndex];
-    bgMusic.play().catch(e => console.warn("Music failed to play:", e));
-    bgMusic.onended = () => {
-        musicIndex = (musicIndex + 1) % musicFiles.length;
-        bgMusic.src = musicFiles[musicIndex];
-        bgMusic.play().catch(e => console.warn("Music failed to play:", e));
-    };
+    bgMusic.play();
+  };
 };
 
 // ==================== TIMER ====================
 function startTimer(){
-    timerInterval = setInterval(()=>{
-        timerEl.textContent = ((Date.now() - startTime)/1000).toFixed(1) + 's';
-    }, 100);
+  timerInterval = setInterval(()=>{
+    timerEl.textContent =
+      ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+  }, 100);
 }
 
 // ==================== LIVES ====================
-function updateLives(){ livesEl.textContent = '❤ '.repeat(lives); }
-function loseLife(){ flash('wrong'); shake(); lives--; updateLives(); if(lives <= 0) location.reload(); }
+function updateLives(){
+  livesEl.textContent = '❤ '.repeat(lives);
+}
+function loseLife(){
+  sfxWrong.currentTime = 0;
+  sfxWrong.play();
+  flash('wrong');
+  shake();
+  lives--;
+  updateLives();
+  if(lives <= 0) location.reload();
+}
 
 // ==================== FEEDBACK ====================
 function flash(type){
-    document.body.classList.add(type);
-    setTimeout(()=>document.body.classList.remove(type),150);
+  document.body.classList.add(type);
+  setTimeout(()=>document.body.classList.remove(type),150);
 }
 function shake(){
-    questionContainer.classList.remove('shake');
-    void questionContainer.offsetWidth;
-    questionContainer.classList.add('shake');
+  questionContainer.classList.remove('shake');
+  void questionContainer.offsetWidth;
+  questionContainer.classList.add('shake');
 }
 
 // ==================== QUESTIONS ====================
 function showQuestion(){
-    if(currentIndex >= questions.length){ finishQuiz(); return; }
+  if(currentIndex >= questions.length){
+    finishQuiz();
+    return;
+  }
 
-    answersDiv.innerHTML = '';
-    const q = questions[currentIndex];
+  answersDiv.innerHTML = '';
+  const q = questions[currentIndex];
 
-    questionNumberCorner.textContent = `${currentIndex + 1} / ${questions.length}`;
-    questionText.textContent = q.q;
-    questionText.style.animation = 'none'; void questionText.offsetWidth;
-    questionText.style.animation = 'pound 0.4s';
+  questionNumberCorner.textContent =
+    `${currentIndex + 1} / ${questions.length}`;
+  questionText.textContent = q.q;
 
-    // Shuffle options; first JSON option is always correct
-    const shuffledOptions = shuffle([...q.options]);
-    const correctIndex = shuffledOptions.indexOf(q.options[0]);
+  const options = shuffle([...q.options]);
+  const correctIndex = options.indexOf(q.options[0]);
 
-    shuffledOptions.forEach((opt, i)=>{
-        const btn = document.createElement('button');
-        btn.textContent = opt;
-        btn.onclick = () => {
-            if(i === correctIndex){
-                flash('correct');
-                nextQuestion();
-            } else {
-                loseLife();
-            }
-        };
-        answersDiv.appendChild(btn);
-    });
+  options.forEach((opt, i)=>{
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.onclick = () => {
+      if(i === correctIndex){
+        sfxCorrect.currentTime = 0;
+        sfxCorrect.play();
+        flash('correct');
+        currentIndex++;
+        showQuestion();
+      } else {
+        loseLife();
+      }
+    };
+    answersDiv.appendChild(btn);
+  });
 }
 
-function nextQuestion(){ currentIndex++; showQuestion(); }
-
-// ==================== FINISH QUIZ ====================
+// ==================== FINISH ====================
 function finishQuiz(){
-    clearInterval(timerInterval);
-    const timeTaken = ((Date.now() - startTime)/1000).toFixed(2);
-    saveScore(username, timeTaken);
-    showLeaderboard();
+  clearInterval(timerInterval);
+  const time = ((Date.now() - startTime) / 1000).toFixed(2);
+
+  saveLocalScore(username, time);
+  saveScoreToJsonBin(username, time);
+  showLeaderboard();
 }
 
-// ==================== LEADERBOARD ====================
-function saveScore(user, time){
-    const lb = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-    let name = user;
-    const dup = lb.filter(e => e.username.startsWith(user)).length;
-    if(dup > 0) name = user + '#' + (dup + 1);
-    lb.push({username: name, time: parseFloat(time)});
-    lb.sort((a,b) => a.time - b.time);
-    if(lb.length > 1000) lb.length = 1000;
-    localStorage.setItem('leaderboard', JSON.stringify(lb));
+// ==================== LOCAL LEADERBOARD ====================
+function saveLocalScore(user, time){
+  const lb = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+  lb.push({ username: user, time: parseFloat(time) });
+  lb.sort((a,b)=>a.time-b.time);
+  if(lb.length > 1000) lb.length = 1000;
+  localStorage.setItem('leaderboard', JSON.stringify(lb));
 }
 
-function showLeaderboard(){
-    gameScreen.innerHTML = '<h2>LEADERBOARD</h2>';
-    const lb = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-    const ol = document.createElement('ol');
-    ol.style.color = 'yellow';
-    ol.style.fontSize = '1rem';
-    ol.style.maxHeight = '80vh';
-    ol.style.overflowY = 'auto';
-    ol.style.padding = '0 1rem';
-    lb.forEach(entry => {
-        const li = document.createElement('li');
-        li.textContent = `${entry.username} — ${entry.time}s`;
-        ol.appendChild(li);
+// ==================== JSONBIN SAVE ====================
+async function saveScoreToJsonBin(user, time){
+  try{
+    const getRes = await fetch(
+      `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,
+      { headers: { 'X-Master-Key': API_KEY } }
+    );
+    const json = await getRes.json();
+    const data = json.record || { leaderboard: [] };
+
+    data.leaderboard.push({ username: user, time: parseFloat(time) });
+    data.leaderboard.sort((a,b)=>a.time-b.time);
+    if(data.leaderboard.length > 1000)
+      data.leaderboard.length = 1000;
+
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': API_KEY
+      },
+      body: JSON.stringify(data)
     });
-    gameScreen.appendChild(ol);
+  }catch(e){
+    console.error('JSONBin error', e);
+  }
+}
+
+// ==================== SHOW LEADERBOARD ====================
+function showLeaderboard(){
+  gameScreen.innerHTML = '<h2>LEADERBOARD</h2>';
+  const lb = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+  const ol = document.createElement('ol');
+  lb.forEach(e=>{
+    const li = document.createElement('li');
+    li.textContent = `${e.username} — ${e.time}s`;
+    ol.appendChild(li);
+  });
+  gameScreen.appendChild(ol);
 }
 
 // ==================== CHANGE USERNAME BUTTON ====================
 function addChangeUsernameButton(){
-    const existing = document.getElementById('change-username-btn');
-    if(existing) existing.remove();
-
-    const btn = document.createElement('button');
-    btn.id = 'change-username-btn';
-    btn.textContent = 'Change Username';
-
-    // Bottom-left corner, smaller width, slightly taller
-    Object.assign(btn.style, {
-        position: 'fixed',
-        bottom: '20px',
-        left: '20px',
-        width: '120px',
-        height: '40px',
-        fontSize: '0.9rem',
-        zIndex: 9999
-    });
-
-    btn.onclick = () => {
-        const newName = prompt("Enter new username:", username || '');
-        if(newName && newName.trim()){
-            username = newName.trim();
-            localStorage.setItem('username', username);
-            alert("Username updated to: " + username);
-            usernameInput.value = username;
-        }
-    };
-
-    document.body.appendChild(btn);
+  const btn = document.createElement('button');
+  btn.textContent = 'Change Username';
+  Object.assign(btn.style,{
+    position:'fixed',
+    bottom:'20px',
+    left:'20px',
+    width:'120px',
+    height:'42px',
+    fontSize:'0.9rem',
+    zIndex:9999
+  });
+  btn.onclick = ()=>{
+    const n = prompt('New username:', username);
+    if(n){
+      username = n.trim();
+      localStorage.setItem('username', username);
+      usernameDisplay.textContent = username;
+    }
+  };
+  document.body.appendChild(btn);
 }

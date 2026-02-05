@@ -27,7 +27,7 @@ const musicFiles = [
 ];
 let musicIndex = 0;
 const bgMusic = new Audio();
-bgMusic.volume = 0.3;
+bgMusic.volume = 0.25;
 
 // ==================== SOUND EFFECTS (ONLINE) ====================
 const sfxCorrect = new Audio(
@@ -36,8 +36,8 @@ const sfxCorrect = new Audio(
 const sfxWrong = new Audio(
   'https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg'
 );
-sfxCorrect.volume = 0.6;
-sfxWrong.volume = 0.6;
+sfxCorrect.volume = 1;
+sfxWrong.volume = 1;
 
 // ==================== JSONBIN ====================
 const BIN_ID = '698280e6d0ea881f409e978f';

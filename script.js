@@ -27,7 +27,7 @@ const musicFiles = [
 ];
 let musicIndex = 0;
 const bgMusic = new Audio();
-bgMusic.volume = 0.2;
+bgMusic.volume = 0.1;
 
 // ==================== SOUND EFFECTS (ONLINE) ====================
 const sfxCorrect = new Audio(

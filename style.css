@@ -10,7 +10,7 @@ body, html { width:100%; height:100%; overflow:hidden; display:flex; justify-con
 #title { font-size:2.7rem; display:flex; justify-content:center; align-items:center; flex-wrap:wrap; margin-bottom:2rem; text-align:center; }
 #title span {
     display:inline-block;
-    margin:0 2px;
+    margin:0 1.7px;
     color: yellow;
     text-shadow:1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
     transform: rotate(calc(-12deg + 24deg * var(--i)/11)) translateY(calc(-2px + 4px * var(--i)/11));

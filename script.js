@@ -14,7 +14,8 @@ const usernameDisplay = document.getElementById('username-display');
 // ==================== STATE ====================
 let questions = [];
 let currentIndex = 0;
-let lives = 5;
+let maxLives = 5;
+let lives = maxLives;
 let startTime;
 let timerInterval;
 let username = localStorage.getItem('username') || null;
@@ -35,8 +36,8 @@ const API_KEY = '$2a$10$YENQL1visC/5iaLFbd2rcu3wuHMmYBB5uvPlu.SWdFXD.LBIMIQy6';
 
 // ==================== SHUFFLE ====================
 function shuffle(arr){
-  for(let i = arr.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
@@ -79,12 +80,12 @@ playBtn.onclick = async () => {
   startTimer();
   updateLives();
   showQuestion();
-  addChangeUsernameButton();
 
+  // Background music
   bgMusic.src = musicFiles[0];
   bgMusic.play();
   bgMusic.onended = () => {
-    musicIndex = (musicIndex + 1) % musicFiles.length;
+    musicIndex = (musicIndex+1) % musicFiles.length;
     bgMusic.src = musicFiles[musicIndex];
     bgMusic.play();
   };
@@ -93,22 +94,30 @@ playBtn.onclick = async () => {
 // ==================== TIMER ====================
 function startTimer(){
   timerInterval = setInterval(()=>{
-    timerEl.textContent =
-      ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+    timerEl.textContent = ((Date.now()-startTime)/1000).toFixed(1)+'s';
   }, 100);
 }
 
 // ==================== LIVES ====================
 function updateLives(){
-  livesEl.textContent = '❤ '.repeat(lives);
+  livesEl.innerHTML = '';
+  for(let i=0;i<lives;i++){
+    const heart = document.createElement('div');
+    heart.classList.add('pixel-heart');
+    for(let j=0;j<25;j++){
+      const pixel = document.createElement('div');
+      heart.appendChild(pixel);
+    }
+    livesEl.appendChild(heart);
+  }
 }
 
 function loseLife(){
   flash('wrong');
-  showIcon('❌', 10);
+  showIcon('❌',10);
   lives--;
   updateLives();
-  if(lives <= 0) location.reload();
+  if(lives<=0) location.reload();
 }
 
 // ==================== FLASH ====================
@@ -118,33 +127,29 @@ function flash(type){
 }
 
 // ==================== VISUAL ICON + SHAKE ====================
-function showIcon(symbol, shakeIntensity = 0){
-  const icon = document.createElement('div');
-  icon.textContent = symbol;
+function showIcon(symbol, shakeIntensity=0){
+  const icon=document.createElement('div');
+  icon.textContent=symbol;
   icon.classList.add('feedback-icon');
   document.body.appendChild(icon);
 
-  // float & fade
   setTimeout(()=>{
-    icon.style.transform = 'translate(-50%, -50%) translateY(-60px)';
-    icon.style.opacity = 0;
-  }, 50);
+    icon.style.transform='translate(-50%,-50%) translateY(-60px)';
+    icon.style.opacity=0;
+  },50);
+  setTimeout(()=>icon.remove(),600);
 
-  setTimeout(()=> icon.remove(), 600);
-
-  // shake screen if intensity > 0
-  if(shakeIntensity > 0){
-    const body = document.body;
-    body.style.transition = 'transform 0.05s';
-    let i = 0;
-    const interval = setInterval(()=>{
-      const x = (Math.random()*2-1)*shakeIntensity;
-      const y = (Math.random()*2-1)*shakeIntensity;
-      body.style.transform = `translate(${x}px,${y}px)`;
+  if(shakeIntensity>0){
+    const body=document.body;
+    let i=0;
+    const interval=setInterval(()=>{
+      const x=(Math.random()*2-1)*shakeIntensity;
+      const y=(Math.random()*2-1)*shakeIntensity;
+      body.style.transform=`translate(${x}px,${y}px)`;
       i++;
       if(i>5){
         clearInterval(interval);
-        body.style.transform = 'translate(0,0)';
+        body.style.transform='translate(0,0)';
       }
     },50);
   }
@@ -152,25 +157,23 @@ function showIcon(symbol, shakeIntensity = 0){
 
 // ==================== QUESTIONS ====================
 function showQuestion(){
-  if(currentIndex >= questions.length){
+  if(currentIndex>=questions.length){
     finishQuiz();
     return;
   }
 
-  answersDiv.innerHTML = '';
+  answersDiv.innerHTML='';
   const q = questions[currentIndex];
-
-  questionNumberCorner.textContent =
-    `${currentIndex + 1} / ${questions.length}`;
-  questionText.textContent = q.q;
+  questionNumberCorner.textContent=`${currentIndex+1} / ${questions.length}`;
+  questionText.textContent=q.q;
 
   const options = shuffle([...q.options]);
   const correctIndex = options.indexOf(q.options[0]);
 
   options.forEach((opt,i)=>{
-    const btn = document.createElement('button');
-    btn.textContent = opt;
-    btn.onclick = () => {
+    const btn=document.createElement('button');
+    btn.textContent=opt;
+    btn.onclick=()=>{
       if(i===correctIndex){
         flash('correct');
         showIcon('✅',3);
@@ -187,7 +190,7 @@ function showQuestion(){
 // ==================== FINISH ====================
 function finishQuiz(){
   clearInterval(timerInterval);
-  const time = ((Date.now() - startTime)/1000).toFixed(2);
+  const time=((Date.now()-startTime)/1000).toFixed(2);
 
   saveLocalScore(username,time);
   saveScoreToJsonBin(username,time);
@@ -196,7 +199,7 @@ function finishQuiz(){
 
 // ==================== LOCAL LEADERBOARD ====================
 function saveLocalScore(user,time){
-  const lb = JSON.parse(localStorage.getItem('leaderboard')||'[]');
+  const lb=JSON.parse(localStorage.getItem('leaderboard')||'[]');
   lb.push({username:user,time:parseFloat(time)});
   lb.sort((a,b)=>a.time-b.time);
   if(lb.length>1000) lb.length=1000;
@@ -206,10 +209,10 @@ function saveLocalScore(user,time){
 // ==================== JSONBIN SAVE ====================
 async function saveScoreToJsonBin(user,time){
   try{
-    const getRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,
+    const getRes=await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,
       {headers:{'X-Master-Key':API_KEY}});
-    const json = await getRes.json();
-    const data = json.record || {leaderboard:[]};
+    const json=await getRes.json();
+    const data=json.record||{leaderboard:[]};
     data.leaderboard.push({username:user,time:parseFloat(time)});
     data.leaderboard.sort((a,b)=>a.time-b.time);
     if(data.leaderboard.length>1000) data.leaderboard.length=1000;
@@ -227,27 +230,26 @@ async function saveScoreToJsonBin(user,time){
 
 // ==================== SHOW LEADERBOARD (JSONBIN) ====================
 async function showLeaderboard(){
-  gameScreen.innerHTML = '<h2>LEADERBOARD</h2>';
+  gameScreen.innerHTML='<h2>LEADERBOARD</h2>';
 
-  let lb = [];
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': API_KEY }
+  let lb=[];
+  try{
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,{
+      headers:{'X-Master-Key':API_KEY}
     });
-    const json = await res.json();
-    lb = json.record?.leaderboard || [];
-  } catch(e){
-    console.error('Error fetching leaderboard:', e);
-    lb = JSON.parse(localStorage.getItem('leaderboard') || '[]'); // fallback
+    const json=await res.json();
+    lb=json.record?.leaderboard||[];
+  }catch(e){
+    console.error(e);
+    lb=JSON.parse(localStorage.getItem('leaderboard')||'[]');
   }
 
-  // Sort by fastest time
   lb.sort((a,b)=>a.time-b.time);
 
-  const ol = document.createElement('ol');
+  const ol=document.createElement('ol');
   lb.forEach(e=>{
-    const li = document.createElement('li');
-    li.textContent = `${e.username} — ${e.time}s`;
+    const li=document.createElement('li');
+    li.textContent=`${e.username} — ${e.time}s`;
     ol.appendChild(li);
   });
   gameScreen.appendChild(ol);
@@ -270,3 +272,6 @@ function addChangeUsernameButton(){
   };
   document.body.appendChild(btn);
 }
+
+// Initialize change username button on game start
+addChangeUsernameButton();
